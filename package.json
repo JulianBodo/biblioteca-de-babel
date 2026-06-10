@@ -1,0 +1,19 @@
+{
+  "name": "biblioteca-de-babel",
+  "version": "1.0.0",
+  "description": "Sistema de gestión bibliotecaria.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianBodo/biblioteca-de-babel.git"
+  },
+  "author": "Bodo Julián, Cabrera Federico, Medina Manuel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JulianBodo/biblioteca-de-babel/issues"
+  },
+  "homepage": "https://github.com/JulianBodo/biblioteca-de-babel#readme"
+}
