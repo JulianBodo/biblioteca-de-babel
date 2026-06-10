@@ -15,5 +15,18 @@
   "bugs": {
     "url": "https://github.com/JulianBodo/biblioteca-de-babel/issues"
   },
-  "homepage": "https://github.com/JulianBodo/biblioteca-de-babel#readme"
+  "homepage": "https://github.com/JulianBodo/biblioteca-de-babel#readme",
+  "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.2",
+    "prisma": "^7.8.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.3"
+  }
 }
