@@ -13,8 +13,7 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "types": ["node"]
+    "experimentalDecorators": true
   },
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules"]

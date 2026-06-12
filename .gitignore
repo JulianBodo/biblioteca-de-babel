@@ -31,3 +31,6 @@ coverage/
 
 # Cachés
 .cache/
+
+# Prisma Client generado
+generated/

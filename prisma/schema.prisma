@@ -1,15 +1,68 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
+enum EstadoLibro {
+  DISPONIBLE
+  PRESTADO
+  PERDIDO
+}
+
+enum EstadoPrestamo {
+  ACTIVO
+  DEVUELTO
+}
+
+model Libro {
+  id Int @id @default(autoincrement())
+
+  titulo String
+  autor String
+  isbn String @unique
+
+  genero String
+  editorial String
+  anioPublicacion Int
+
+  cantidadEjemplares Int
+  cantidadDisponibles Int
+
+  estado EstadoLibro @default(DISPONIBLE)
+
+  prestamos Prestamo[]
+}
+
+model Lector {
+  id Int @id @default(autoincrement())
+
+  nombreCompleto String
+  dni String @unique
+  email String
+  telefono String
+
+  activo Boolean @default(true)
+
+  prestamos Prestamo[]
+}
+
+model Prestamo {
+  id Int @id @default(autoincrement())
+
+  libroId Int
+  lectorId Int
+
+  fechaPrestamo DateTime @default(now())
+  fechaDevolucionEsperada DateTime
+  fechaDevolucionReal DateTime?
+
+  estado EstadoPrestamo @default(ACTIVO)
+
+  libro Libro @relation(fields: [libroId], references: [id])
+  lector Lector @relation(fields: [lectorId], references: [id])
 }
