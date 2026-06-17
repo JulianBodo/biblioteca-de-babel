@@ -8,7 +8,5 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Libro.ts'
-export type * from './models/Lector.ts'
-export type * from './models/Prestamo.ts'
+export type * from './models/User.ts'
 export type * from './commonInputTypes.ts'

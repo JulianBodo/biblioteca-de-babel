@@ -51,9 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Libro: 'Libro',
-  Lector: 'Lector',
-  Prestamo: 'Prestamo'
+  User: 'User'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,45 +70,13 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const LibroScalarFieldEnum = {
+export const UserScalarFieldEnum = {
   id: 'id',
-  titulo: 'titulo',
-  autor: 'autor',
-  isbn: 'isbn',
-  genero: 'genero',
-  editorial: 'editorial',
-  anioPublicacion: 'anioPublicacion',
-  cantidadEjemplares: 'cantidadEjemplares',
-  cantidadDisponibles: 'cantidadDisponibles',
-  estado: 'estado'
-} as const
-
-export type LibroScalarFieldEnum = (typeof LibroScalarFieldEnum)[keyof typeof LibroScalarFieldEnum]
-
-
-export const LectorScalarFieldEnum = {
-  id: 'id',
-  nombreCompleto: 'nombreCompleto',
-  dni: 'dni',
   email: 'email',
-  telefono: 'telefono',
-  activo: 'activo'
+  name: 'name'
 } as const
 
-export type LectorScalarFieldEnum = (typeof LectorScalarFieldEnum)[keyof typeof LectorScalarFieldEnum]
-
-
-export const PrestamoScalarFieldEnum = {
-  id: 'id',
-  libroId: 'libroId',
-  lectorId: 'lectorId',
-  fechaPrestamo: 'fechaPrestamo',
-  fechaDevolucionEsperada: 'fechaDevolucionEsperada',
-  fechaDevolucionReal: 'fechaDevolucionReal',
-  estado: 'estado'
-} as const
-
-export type PrestamoScalarFieldEnum = (typeof PrestamoScalarFieldEnum)[keyof typeof PrestamoScalarFieldEnum]
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -127,12 +93,4 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

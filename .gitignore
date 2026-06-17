@@ -1,5 +1,5 @@
 # Dependencias
-/generated/prisma/
+generated/
 node_modules/
 
 # Variables de entorno

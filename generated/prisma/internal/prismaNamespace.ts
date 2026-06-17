@@ -384,9 +384,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Libro: 'Libro',
-  Lector: 'Lector',
-  Prestamo: 'Prestamo'
+  User: 'User'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,229 +400,81 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "libro" | "lector" | "prestamo"
+    modelProps: "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
-    Libro: {
-      payload: Prisma.$LibroPayload<ExtArgs>
-      fields: Prisma.LibroFieldRefs
+    User: {
+      payload: Prisma.$UserPayload<ExtArgs>
+      fields: Prisma.UserFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.LibroFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload> | null
+          args: Prisma.UserFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.LibroFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>
+          args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
         }
         findFirst: {
-          args: Prisma.LibroFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload> | null
+          args: Prisma.UserFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.LibroFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>
+          args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
         }
         findMany: {
-          args: Prisma.LibroFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>[]
+          args: Prisma.UserFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>[]
         }
         create: {
-          args: Prisma.LibroCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>
+          args: Prisma.UserCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
         }
         createMany: {
-          args: Prisma.LibroCreateManyArgs<ExtArgs>
+          args: Prisma.UserCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.LibroCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>[]
+          args: Prisma.UserCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>[]
         }
         delete: {
-          args: Prisma.LibroDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>
+          args: Prisma.UserDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
         }
         update: {
-          args: Prisma.LibroUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>
+          args: Prisma.UserUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
         }
         deleteMany: {
-          args: Prisma.LibroDeleteManyArgs<ExtArgs>
+          args: Prisma.UserDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.LibroUpdateManyArgs<ExtArgs>
+          args: Prisma.UserUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.LibroUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>[]
+          args: Prisma.UserUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>[]
         }
         upsert: {
-          args: Prisma.LibroUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LibroPayload>
+          args: Prisma.UserUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
         }
         aggregate: {
-          args: Prisma.LibroAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateLibro>
+          args: Prisma.UserAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUser>
         }
         groupBy: {
-          args: Prisma.LibroGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.LibroGroupByOutputType>[]
+          args: Prisma.UserGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserGroupByOutputType>[]
         }
         count: {
-          args: Prisma.LibroCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.LibroCountAggregateOutputType> | number
-        }
-      }
-    }
-    Lector: {
-      payload: Prisma.$LectorPayload<ExtArgs>
-      fields: Prisma.LectorFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.LectorFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.LectorFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>
-        }
-        findFirst: {
-          args: Prisma.LectorFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.LectorFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>
-        }
-        findMany: {
-          args: Prisma.LectorFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>[]
-        }
-        create: {
-          args: Prisma.LectorCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>
-        }
-        createMany: {
-          args: Prisma.LectorCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.LectorCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>[]
-        }
-        delete: {
-          args: Prisma.LectorDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>
-        }
-        update: {
-          args: Prisma.LectorUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>
-        }
-        deleteMany: {
-          args: Prisma.LectorDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.LectorUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.LectorUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>[]
-        }
-        upsert: {
-          args: Prisma.LectorUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LectorPayload>
-        }
-        aggregate: {
-          args: Prisma.LectorAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateLector>
-        }
-        groupBy: {
-          args: Prisma.LectorGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.LectorGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.LectorCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.LectorCountAggregateOutputType> | number
-        }
-      }
-    }
-    Prestamo: {
-      payload: Prisma.$PrestamoPayload<ExtArgs>
-      fields: Prisma.PrestamoFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.PrestamoFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.PrestamoFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>
-        }
-        findFirst: {
-          args: Prisma.PrestamoFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.PrestamoFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>
-        }
-        findMany: {
-          args: Prisma.PrestamoFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>[]
-        }
-        create: {
-          args: Prisma.PrestamoCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>
-        }
-        createMany: {
-          args: Prisma.PrestamoCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.PrestamoCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>[]
-        }
-        delete: {
-          args: Prisma.PrestamoDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>
-        }
-        update: {
-          args: Prisma.PrestamoUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>
-        }
-        deleteMany: {
-          args: Prisma.PrestamoDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.PrestamoUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.PrestamoUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>[]
-        }
-        upsert: {
-          args: Prisma.PrestamoUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrestamoPayload>
-        }
-        aggregate: {
-          args: Prisma.PrestamoAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePrestamo>
-        }
-        groupBy: {
-          args: Prisma.PrestamoGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PrestamoGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.PrestamoCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PrestamoCountAggregateOutputType> | number
+          args: Prisma.UserCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
         }
       }
     }
@@ -667,45 +517,13 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const LibroScalarFieldEnum = {
+export const UserScalarFieldEnum = {
   id: 'id',
-  titulo: 'titulo',
-  autor: 'autor',
-  isbn: 'isbn',
-  genero: 'genero',
-  editorial: 'editorial',
-  anioPublicacion: 'anioPublicacion',
-  cantidadEjemplares: 'cantidadEjemplares',
-  cantidadDisponibles: 'cantidadDisponibles',
-  estado: 'estado'
-} as const
-
-export type LibroScalarFieldEnum = (typeof LibroScalarFieldEnum)[keyof typeof LibroScalarFieldEnum]
-
-
-export const LectorScalarFieldEnum = {
-  id: 'id',
-  nombreCompleto: 'nombreCompleto',
-  dni: 'dni',
   email: 'email',
-  telefono: 'telefono',
-  activo: 'activo'
+  name: 'name'
 } as const
 
-export type LectorScalarFieldEnum = (typeof LectorScalarFieldEnum)[keyof typeof LectorScalarFieldEnum]
-
-
-export const PrestamoScalarFieldEnum = {
-  id: 'id',
-  libroId: 'libroId',
-  lectorId: 'lectorId',
-  fechaPrestamo: 'fechaPrestamo',
-  fechaDevolucionEsperada: 'fechaDevolucionEsperada',
-  fechaDevolucionReal: 'fechaDevolucionReal',
-  estado: 'estado'
-} as const
-
-export type PrestamoScalarFieldEnum = (typeof PrestamoScalarFieldEnum)[keyof typeof PrestamoScalarFieldEnum]
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -722,14 +540,6 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -763,55 +573,6 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-    
-
-
-/**
- * Reference to a field of type 'EstadoLibro'
- */
-export type EnumEstadoLibroFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoLibro'>
-    
-
-
-/**
- * Reference to a field of type 'EstadoLibro[]'
- */
-export type ListEnumEstadoLibroFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoLibro[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
- * Reference to a field of type 'DateTime'
- */
-export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-/**
- * Reference to a field of type 'DateTime[]'
- */
-export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-/**
- * Reference to a field of type 'EstadoPrestamo'
- */
-export type EnumEstadoPrestamoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoPrestamo'>
-    
-
-
-/**
- * Reference to a field of type 'EstadoPrestamo[]'
- */
-export type ListEnumEstadoPrestamoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoPrestamo[]'>
     
 
 
@@ -938,9 +699,7 @@ export type PrismaClientOptions = ({
   queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
-  libro?: Prisma.LibroOmit
-  lector?: Prisma.LectorOmit
-  prestamo?: Prisma.PrestamoOmit
+  user?: Prisma.UserOmit
 }
 
 /* Types for Logging */

@@ -9,18 +9,7 @@
 * 🟢 You can import this file directly.
 */
 
-export const EstadoLibro = {
-  DISPONIBLE: 'DISPONIBLE',
-  PRESTADO: 'PRESTADO',
-  PERDIDO: 'PERDIDO'
-} as const
-
-export type EstadoLibro = (typeof EstadoLibro)[keyof typeof EstadoLibro]
 
 
-export const EstadoPrestamo = {
-  ACTIVO: 'ACTIVO',
-  DEVUELTO: 'DEVUELTO'
-} as const
-
-export type EstadoPrestamo = (typeof EstadoPrestamo)[keyof typeof EstadoPrestamo]
+// This file is empty because there are no enums in the schema.
+export {}
