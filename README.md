@@ -1,7 +1,9 @@
 # biblioteca-de-babel
+
 Sistema de gestión bibliotecaria
 
 ## Instalación
+
 Clonar el repositorio:
 
 ```bash
@@ -15,14 +17,10 @@ Instalar dependencias:
 npm install
 ```
 
-Configurar variables de entorno:
-
-```bash
-cp .env.example .env
-```
+````
 
 Levantar PostgreSQL:
 
 ```bash
 docker compose up -d
-```
+````
