@@ -22,7 +22,8 @@ model User {
 
   userStatus UserStatus @relation(fields: [userStatusId], references: [id])
 
-  loanUsers LoanUser[]
+
+  loans Loan[]
 }
 
 model Loan {
@@ -37,30 +38,22 @@ model Loan {
   book         Book         @relation(fields: [bookId], references: [id])
   returnStatus ReturnStatus @relation(fields: [returnStatusId], references: [id])
 
-  loanUsers LoanUser[]
 }
 
 // Intermediate table for the many-to-many relation between User and Loan through LoanUser
-model LoanUser {
-  id      Int  @id @default(autoincrement())
-  userId  Int
-  loanId  Int
 
-  user User @relation(fields: [userId], references: [id])
-  loan Loan @relation(fields: [loanId], references: [id])
-}
 
 model Book {
   id              Int       @id @default(autoincrement())
   isbn            String    @unique
   title           String
   publicationYear Int
-  authorId        Int
+  authorPublisherId Int
   genreId         Int
   publisherId     Int
 
-  author    Author    @relation(fields: [authorId], references: [id])
-  publisher Publisher @relation(fields: [publisherId], references: [id])
+  
+  authorPublisher AuthorPublisher @relation(fields: [authorPublisherId], references: [id])
   genre     Genre     @relation(fields: [genreId], references: [id])
 
   loans Loan[]
@@ -69,11 +62,10 @@ model Book {
 model Publisher {
   id               Int               @id @default(autoincrement())
   name             String
-  authorPublisherId Int
 
   authorPublishers AuthorPublisher[]
 
-  books Book[]
+ 
 }
 
 model Author {
@@ -83,7 +75,7 @@ model Author {
 
   authorPublishers AuthorPublisher[]
 
-  books Book[]
+ 
 }
 
 // Intermediate table for the many-to-many relation between Author and Publisher
@@ -94,9 +86,11 @@ model AuthorPublisher {
 
   author    Author    @relation(fields: [authorId], references: [id])
   publisher Publisher @relation(fields: [publisherId], references: [id])
+
+  books Book[]
 }
 
-|model UserStatus {
+model UserStatus {
   id     Int    @id @default(autoincrement())
   status String
 
