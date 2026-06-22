@@ -1,26 +1,36 @@
 # biblioteca-de-babel
 
-Sistema de gestión bibliotecaria
+Library Management System.
 
-## Instalación
+## Requirements
 
-Clonar el repositorio:
+* Node.js 22 or higher
+* Docker
+* Git
+
+## Installation
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/JulianBodo/biblioteca-de-babel.git
 cd biblioteca-de-babel
 ```
 
-Instalar dependencias:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-````
-
-Levantar PostgreSQL:
+Start PostgreSQL:
 
 ```bash
 docker compose up -d
-````
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
