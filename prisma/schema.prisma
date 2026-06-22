@@ -12,106 +12,107 @@ datasource db {
   provider = "postgresql"
 }
 
-model Usuario {
-  id              Int    @id @default(autoincrement())
-  nombre          String
-  apellido        String
-  email           String @unique
-  DNI             String @unique
-  estadoUsuarioId Int
+model User {
+  id           Int        @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String     @unique
+  DNI   String     @unique
+  userStatusId Int
 
-  estadoUsuarios EstadoUsuario @relation(fields: [estadoUsuarioId], references: [id])
+  userStatus UserStatus @relation(fields: [userStatusId], references: [id])
 
-  prestamoUsuarios PrestamoUsuario[]
+  loanUsers LoanUser[]
 }
 
-model Prestamo {
-  id                 Int       @id @default(autoincrement())
-  usuarioId          Int
-  libroId            Int
-  fechaPrestamo      DateTime
-  fechaDevolucion    DateTime?
-  estadoDevolucionId Int
+model Loan {
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  bookId         Int
+  returnStatusId Int
+  loanDate       DateTime
+  returnDate     DateTime?
 
-  libro            Libro            @relation(fields: [libroId], references: [id])
-  estadoDevolucion EstadoDevolucion @relation(fields: [estadoDevolucionId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+  book         Book         @relation(fields: [bookId], references: [id])
+  returnStatus ReturnStatus @relation(fields: [returnStatusId], references: [id])
 
-  prestamoUsuarios PrestamoUsuario[]
+  loanUsers LoanUser[]
 }
 
-// Tabla intermedia para la relación muchos a muchos entre Usuario y Libro a través de PrestamoUsuario
-model PrestamoUsuario {
-  id         Int @id @default(autoincrement())
-  usuarioId  Int
-  prestamoId Int
+// Intermediate table for the many-to-many relation between User and Loan through LoanUser
+model LoanUser {
+  id      Int  @id @default(autoincrement())
+  userId  Int
+  loanId  Int
 
-  usuario  Usuario  @relation(fields: [usuarioId], references: [id])
-  prestamo Prestamo @relation(fields: [prestamoId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  loan Loan @relation(fields: [loanId], references: [id])
 }
 
-model Libro {
-  id              Int    @id @default(autoincrement())
-  isbn            String @unique
-  titulo          String
-  añoPublicacion Int
-  IdAutor         Int
-  IdGenero        Int
-  IdEditorial     Int
+model Book {
+  id              Int       @id @default(autoincrement())
+  isbn            String    @unique
+  title           String
+  publicationYear Int
+  authorId        Int
+  genreId         Int
+  publisherId     Int
 
-  autor     Autor     @relation(fields: [IdAutor], references: [id])
-  editorial Editorial @relation(fields: [IdEditorial], references: [id])
-  genero    Genero    @relation(fields: [IdGenero], references: [id])
+  author    Author    @relation(fields: [authorId], references: [id])
+  publisher Publisher @relation(fields: [publisherId], references: [id])
+  genre     Genre     @relation(fields: [genreId], references: [id])
 
-  librosPrestados Prestamo[]
+  loans Loan[]
 }
 
-model Editorial {
-  id               Int    @id @default(autoincrement())
-  nombreEditorial  String
-  idAutorEditorial Int
+model Publisher {
+  id               Int               @id @default(autoincrement())
+  name             String
+  authorPublisherId Int
 
-  EditorialAutor AutorEditorial[]
+  authorPublishers AuthorPublisher[]
 
-  libros Libro[]
+  books Book[]
 }
 
-model Autor {
-  id       Int    @id @default(autoincrement())
-  nombre   String
-  apellido String
+model Author {
+  id        Int               @id @default(autoincrement())
+  firstName String
+  lastName  String
 
-  AutorEditorial AutorEditorial[]
+  authorPublishers AuthorPublisher[]
 
-  libros Libro[]
+  books Book[]
 }
 
-// Tabla intermedia para la relación muchos a muchos entre Autor y Editorial
-model AutorEditorial {
-  id          Int @id @default(autoincrement())
-  Idautor     Int
-  Ideditorial Int
+// Intermediate table for the many-to-many relation between Author and Publisher
+model AuthorPublisher {
+  id          Int      @id @default(autoincrement())
+  authorId    Int
+  publisherId Int
 
-  autor     Autor     @relation(fields: [Idautor], references: [id])
-  editorial Editorial @relation(fields: [Ideditorial], references: [id])
+  author    Author    @relation(fields: [authorId], references: [id])
+  publisher Publisher @relation(fields: [publisherId], references: [id])
 }
 
-model EstadoUsuario {
+|model UserStatus {
   id     Int    @id @default(autoincrement())
-  estado String
+  status String
 
-  usuarios Usuario[]
+  users User[]
 }
 
-model EstadoDevolucion {
+model ReturnStatus {
   id     Int    @id @default(autoincrement())
-  estado String
+  status String
 
-  prestamos Prestamo[]
+  loans Loan[]
 }
 
-model Genero {
-  id           Int    @id @default(autoincrement())
-  nombreGenero String
+model Genre {
+  id   Int    @id @default(autoincrement())
+  name String
 
-  libros Libro[]
+  books Book[]
 }
