@@ -1,0 +1,56 @@
+{
+  "name": "biblioteca-de-babel",
+  "version": "1.0.0",
+  "description": "Sistema de gestión bibliotecaria.",
+  "type": "module",
+  "main": "src/init.ts",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test",
+    "test:api:ui": "playwright test --ui",
+    "test:api:report": "npm run allure:generate && npm run allure:open",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "allure:serve": "allure serve allure-results",
+    "dev": "nodemon --watch src --ext ts --exec tsx src/init.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-local-db.ps1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianBodo/biblioteca-de-babel.git"
+  },
+  "author": "Bodo Julián, Cabrera Federico, Medina Manuel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JulianBodo/biblioteca-de-babel/issues"
+  },
+  "homepage": "https://github.com/JulianBodo/biblioteca-de-babel#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^25.9.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "allure-commandline": "^2.43.0",
+    "allure-playwright": "^3.10.1",
+    "nodemon": "^3.1.14",
+    "openapi-types": "^12.1.3",
+    "prisma": "^7.8.0",
+    "tsx": "^4.19.4",
+    "typescript": "^6.0.3"
+  }
+}
