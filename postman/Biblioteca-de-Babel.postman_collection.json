@@ -1,0 +1,3702 @@
+{
+  "info": {
+    "_postman_id": "biblioteca-de-babel-api-v2",
+    "name": "Biblioteca de Babel — API",
+    "description": "Colección reformulada de la API REST de Biblioteca de Babel.\n\n## Inicio rápido\n1. `npm run dev` → API en **http://localhost:3000**\n2. Importá esta collection + environment **Biblioteca de Babel — Local**\n3. Ejecutá **00 — Setup → Login todos los roles** (Run folder)\n4. Probá por carpeta o usá **06 — Flujos E2E**\n\n## Usuarios seed\n| Rol | Email | Password |\n|-----|-------|----------|\n| Admin | admin@babel.com | admin123 |\n| Bibliotecario | bibliotecario@babel.com | biblio123 |\n| Lector | lector@babel.com | lector123 |\n| Lector inactivo | inactivo@babel.com | inactivo123 |\n\n## Mapa de endpoints\n| Área | Rutas |\n|------|-------|\n| Health | `GET /health` |\n| Auth | login, me, users CRUD |\n| Catálogo | books, authors, publishers, genres |\n| Lectores | list, statuses, suspend, reactivate, sync-inactivity |\n| Préstamos | list, **available**, pending, approve, reject, return |\n| Mora | `GET /loans/overdue` |\n| Devoluciones | `GET /loans/returns` |",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "librarianToken",
+      "value": ""
+    },
+    {
+      "key": "readerToken",
+      "value": ""
+    },
+    {
+      "key": "inactiveReaderToken",
+      "value": ""
+    },
+    {
+      "key": "bookId",
+      "value": "1"
+    },
+    {
+      "key": "loanId",
+      "value": "1"
+    },
+    {
+      "key": "authorId",
+      "value": "1"
+    },
+    {
+      "key": "publisherId",
+      "value": "1"
+    },
+    {
+      "key": "genreId",
+      "value": "1"
+    },
+    {
+      "key": "readerId",
+      "value": "1"
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "returnDateFrom",
+      "value": ""
+    },
+    {
+      "key": "returnDateTo",
+      "value": ""
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const today = new Date().toISOString().slice(0, 10);",
+          "pm.collectionVariables.set('returnDateFrom', today);",
+          "pm.collectionVariables.set('returnDateTo', today);",
+          "if (pm.environment.name) {",
+          "  pm.environment.set('returnDateFrom', today);",
+          "  pm.environment.set('returnDateTo', today);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "00 — Setup",
+      "description": "Ejecutá **Login todos los roles** con *Run folder* antes de probar endpoints autenticados.",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  saveVar('adminToken', pm.response.json().token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@babel.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Login Bibliotecario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  saveVar('librarianToken', pm.response.json().token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"bibliotecario@babel.com\",\n  \"password\": \"biblio123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Login Lector",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  saveVar('readerToken', pm.response.json().token);",
+                  "  const readerId = pm.response.json().user.readerId;",
+                  "  if (readerId) saveVar('readerId', readerId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"lector@babel.com\",\n  \"password\": \"lector123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Login Lector inactivo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  saveVar('inactiveReaderToken', pm.response.json().token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"inactivo@babel.com\",\n  \"password\": \"inactivo123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Verificar tokens (me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "pm.test('Admin autenticado', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 — Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('status ok', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 — Autenticación",
+      "item": [
+        {
+          "name": "GET /auth/me (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "GET /auth/me (lector)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{readerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "GET /auth/users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/users"
+          }
+        },
+        {
+          "name": "POST /auth/users — crear lector",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}",
+                  "if (pm.response.code === 201) saveVar('userId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo.lector@babel.com\",\n  \"password\": \"test1234\",\n  \"role\": \"READER\",\n  \"firstName\": \"Ana\",\n  \"lastName\": \"Nueva\",\n  \"dni\": \"99887766\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/users"
+          }
+        },
+        {
+          "name": "POST /auth/users — crear bibliotecario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"biblio2@babel.com\",\n  \"password\": \"test1234\",\n  \"role\": \"LIBRARIAN\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/users"
+          }
+        },
+        {
+          "name": "DELETE /auth/users/:id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/users/{{userId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 — Catálogo",
+      "item": [
+        {
+          "name": "Autores",
+          "item": [
+            {
+              "name": "GET /authors",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "  const data = pm.response.json();",
+                      "  const id = Array.isArray(data) ? data[0]?.id : data.id;",
+                      "  if (id) saveVar('authorId', id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/authors"
+              }
+            },
+            {
+              "name": "GET /authors/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/authors/{{authorId}}"
+              }
+            },
+            {
+              "name": "POST /authors",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Julio\",\n  \"lastName\": \"Cortázar\"\n}"
+                },
+                "url": "{{baseUrl}}/authors"
+              }
+            },
+            {
+              "name": "PUT /authors/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lastName\": \"Cortázar\"\n}"
+                },
+                "url": "{{baseUrl}}/authors/{{authorId}}"
+              }
+            },
+            {
+              "name": "DELETE /authors/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/authors/{{authorId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Editoriales",
+          "item": [
+            {
+              "name": "GET /publishers",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "  const data = pm.response.json();",
+                      "  const id = Array.isArray(data) ? data[0]?.id : data.id;",
+                      "  if (id) saveVar('publisherId', id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/publishers"
+              }
+            },
+            {
+              "name": "GET /publishers/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/publishers/{{publisherId}}"
+              }
+            },
+            {
+              "name": "POST /publishers",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Sudamericana\"\n}"
+                },
+                "url": "{{baseUrl}}/publishers"
+              }
+            },
+            {
+              "name": "PUT /publishers/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Editorial Babel\"\n}"
+                },
+                "url": "{{baseUrl}}/publishers/{{publisherId}}"
+              }
+            },
+            {
+              "name": "DELETE /publishers/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/publishers/{{publisherId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Géneros",
+          "item": [
+            {
+              "name": "GET /genres",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "  const data = pm.response.json();",
+                      "  const id = Array.isArray(data) ? data[0]?.id : data.id;",
+                      "  if (id) saveVar('genreId', id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/genres"
+              }
+            },
+            {
+              "name": "GET /genres/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/genres/{{genreId}}"
+              }
+            },
+            {
+              "name": "POST /genres",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Poesía\"\n}"
+                },
+                "url": "{{baseUrl}}/genres"
+              }
+            },
+            {
+              "name": "PUT /genres/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Ficción\"\n}"
+                },
+                "url": "{{baseUrl}}/genres/{{genreId}}"
+              }
+            },
+            {
+              "name": "DELETE /genres/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/genres/{{genreId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Libros",
+          "item": [
+            {
+              "name": "GET /books (admin — todos)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "  const data = pm.response.json();",
+                      "  const id = Array.isArray(data) ? data[0]?.id : data.id;",
+                      "  if (id) saveVar('bookId', id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/books"
+              }
+            },
+            {
+              "name": "GET /books (lector — con ejemplares)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/books"
+              }
+            },
+            {
+              "name": "GET /books/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/books/{{bookId}}"
+              }
+            },
+            {
+              "name": "POST /books",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 201) saveVar('bookId', pm.response.json().id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"isbn\": \"978-987-1234-99-0\",\n  \"title\": \"Ficciones\",\n  \"publicationYear\": 1944,\n  \"genreId\": {{genreId}},\n  \"publisherId\": {{publisherId}},\n  \"authorIds\": [{{authorId}}],\n  \"totalCopies\": 2\n}"
+                },
+                "url": "{{baseUrl}}/books"
+              }
+            },
+            {
+              "name": "PUT /books/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Ficciones (edición revisada)\",\n  \"totalCopies\": 3\n}"
+                },
+                "url": "{{baseUrl}}/books/{{bookId}}"
+              }
+            },
+            {
+              "name": "DELETE /books/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/books/{{bookId}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 — Lectores",
+      "item": [
+        {
+          "name": "GET /readers/statuses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers/statuses"
+          }
+        },
+        {
+          "name": "GET /readers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers"
+          }
+        },
+        {
+          "name": "GET /readers?status=INACTIVE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/readers?status=INACTIVE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "readers"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "INACTIVE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /readers/:id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers/{{readerId}}"
+          }
+        },
+        {
+          "name": "PUT /readers/:id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"María\",\n  \"lastName\": \"Lectora\"\n}"
+            },
+            "url": "{{baseUrl}}/readers/{{readerId}}"
+          }
+        },
+        {
+          "name": "PATCH /readers/:id/reactivate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers/{{readerId}}/reactivate"
+          }
+        },
+        {
+          "name": "PATCH /readers/:id/suspend",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers/{{readerId}}/suspend"
+          }
+        },
+        {
+          "name": "POST /readers/sync-inactivity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers/sync-inactivity"
+          }
+        },
+        {
+          "name": "DELETE /readers/:id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function saveVar(key, value) {",
+                  "  pm.collectionVariables.set(key, value);",
+                  "  if (pm.environment.name) pm.environment.set(key, value);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/readers/{{readerId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 — Préstamos",
+      "description": "Ciclo completo de préstamos: catálogo disponible, solicitud, aprobación, mora y devoluciones.",
+      "item": [
+        {
+          "name": "Préstamos disponibles",
+          "description": "`GET /loans/available` — libros con ejemplares que el lector aún puede solicitar.",
+          "item": [
+            {
+              "name": "GET /loans/available (lector)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  const books = pm.response.json();",
+                      "  books.forEach(b => pm.expect(b.availableCopies).to.be.above(0));",
+                      "  const pick = books.find(b => b.availableCopies > 0);",
+                      "  if (pick) saveVar('bookId', pick.id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/available"
+              }
+            },
+            {
+              "name": "GET /loans/available (staff)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/available"
+              }
+            },
+            {
+              "name": "GET /loans/available?readerId=",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/available?readerId={{readerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "available"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "{{readerId}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET /loans/available (lector inactivo — 403)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('403', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{inactiveReaderToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/available"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultas",
+          "item": [
+            {
+              "name": "GET /loans (staff)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "GET /loans (lector)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "GET /loans/pending",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/pending"
+              }
+            },
+            {
+              "name": "GET /loans/:id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200) {",
+                      "  const loan = pm.response.json();",
+                      "  if (loan.status === 'ACTIVE') {",
+                      "    pm.expect(loan.daysOnLoan).to.be.a('number');",
+                      "    pm.expect(loan.isOverdue).to.be.a('boolean');",
+                      "  }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "CRUD",
+          "description": "Create, Read, Update, Delete de préstamos.\n\n- **POST** lector: `{ bookId }` · staff: `{ bookId, readerId }`\n- **PUT** staff: `{ dueDate }` solo en ACTIVE\n- **DELETE** staff: PENDING/REJECTED · admin: RETURNED también",
+          "item": [
+            {
+              "name": "POST /loans — solicitar (lector)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 201) saveVar('loanId', pm.response.json().id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bookId\": {{bookId}}\n}"
+                },
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "POST /loans — crear (staff)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 201) saveVar('loanId', pm.response.json().id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{librarianToken}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bookId\": {{bookId}},\n  \"readerId\": {{readerId}}\n}"
+                },
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "POST /loans (lector inactivo — 403)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('403', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{inactiveReaderToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bookId\": {{bookId}}\n}"
+                },
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "PATCH /loans/:id/approve",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200) {",
+                      "  pm.expect(pm.response.json().status).to.eql('ACTIVE');",
+                      "  pm.expect(pm.response.json().daysOnLoan).to.be.a('number');",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/approve"
+              }
+            },
+            {
+              "name": "PUT /loans/:id — extender vencimiento",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const due = new Date();",
+                      "due.setDate(due.getDate() + 21);",
+                      "pm.variables.set('extendedDueDate', due.toISOString());"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  pm.expect(pm.response.json().status).to.eql('ACTIVE');",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{librarianToken}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dueDate\": \"{{extendedDueDate}}\"\n}"
+                },
+                "url": "{{baseUrl}}/loans/{{loanId}}"
+              }
+            },
+            {
+              "name": "PATCH /loans/:id/reject",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/reject"
+              }
+            },
+            {
+              "name": "PATCH /loans/:id/return",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200) {",
+                      "  const loan = pm.response.json();",
+                      "  pm.expect(loan.status).to.eql('RETURNED');",
+                      "  pm.expect(loan.wasLate).to.be.a('boolean');",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/return"
+              }
+            },
+            {
+              "name": "DELETE /loans/:id — eliminar pendiente (staff)",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{librarianToken}}" }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}"
+              }
+            },
+            {
+              "name": "DELETE /loans/:id — eliminar finalizado (admin)",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mora",
+          "description": "Préstamos ACTIVE con `dueDate` vencida.",
+          "item": [
+            {
+              "name": "GET /loans/overdue (bibliotecario)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  pm.response.json().forEach(item => {",
+                      "    pm.expect(item.status).to.eql('ACTIVE');",
+                      "    pm.expect(item.isOverdue).to.be.true;",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/overdue"
+              }
+            },
+            {
+              "name": "GET /loans/overdue (admin)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/overdue"
+              }
+            },
+            {
+              "name": "GET /loans/overdue (lector)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/overdue"
+              }
+            },
+            {
+              "name": "GET /loans/overdue?readerId=",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/overdue?readerId={{readerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "overdue"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "{{readerId}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET /loans/overdue?readerId= (lector — 403)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('403', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/overdue?readerId=1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "overdue"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET /loans/overdue?readerId=abc (400)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('400', () => pm.response.to.have.status(400));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/overdue?readerId=abc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "overdue"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "abc"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registro de devoluciones",
+          "description": "Historial de préstamos RETURNED con `wasLate`.",
+          "item": [
+            {
+              "name": "GET /loans/returns (bibliotecario)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 200) {",
+                      "  pm.response.json().forEach(r => {",
+                      "    pm.expect(r.status).to.eql('RETURNED');",
+                      "    pm.expect(r.wasLate).to.be.a('boolean');",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/returns"
+              }
+            },
+            {
+              "name": "GET /loans/returns (admin)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/returns"
+              }
+            },
+            {
+              "name": "GET /loans/returns (lector)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/returns"
+              }
+            },
+            {
+              "name": "GET /loans/returns?readerId=",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/returns?readerId={{readerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "returns"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "{{readerId}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET /loans/returns?lateOnly=true",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/returns?lateOnly=true",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "returns"
+                  ],
+                  "query": [
+                    {
+                      "key": "lateOnly",
+                      "value": "true"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET /loans/returns?from=&to=",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/returns?from={{returnDateFrom}}&to={{returnDateTo}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "returns"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "{{returnDateFrom}}"
+                    },
+                    {
+                      "key": "to",
+                      "value": "{{returnDateTo}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET /loans/returns?readerId= (lector — 403)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('403', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/returns?readerId=1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "returns"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 — Flujos E2E",
+      "description": "Ejecutá cada subcarpeta con *Run folder* en orden.",
+      "item": [
+        {
+          "name": "Flujo — Préstamo completo",
+          "item": [
+            {
+              "name": "1. Login Lector",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('readerToken', pm.response.json().token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"lector@babel.com\",\n  \"password\": \"lector123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "2. Login Bibliotecario",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('librarianToken', pm.response.json().token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"bibliotecario@babel.com\",\n  \"password\": \"biblio123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "3. Préstamos disponibles",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "const books = pm.response.json();",
+                      "const pick = books.find(b => b.availableCopies > 0);",
+                      "if (pick) saveVar('bookId', pick.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/available"
+              }
+            },
+            {
+              "name": "4. Solicitar préstamo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 201) saveVar('loanId', pm.response.json().id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bookId\": {{bookId}}\n}"
+                },
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "5. Aprobar préstamo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.expect(pm.response.json().status).to.eql('ACTIVE');",
+                      "pm.expect(pm.response.json().isOverdue).to.be.false;"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/approve"
+              }
+            },
+            {
+              "name": "6. Ver detalle (sin mora)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.expect(pm.response.json().daysOverdue).to.eql(0);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}"
+              }
+            },
+            {
+              "name": "7. Devolver préstamo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/return"
+              }
+            },
+            {
+              "name": "8. Verificar en registro",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "const loanId = pm.collectionVariables.get('loanId');",
+                      "const found = pm.response.json().some(r => String(r.id) === String(loanId));",
+                      "pm.expect(found).to.be.true;"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/returns"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo — Devoluciones",
+          "item": [
+            {
+              "name": "1. Login Lector",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('readerToken', pm.response.json().token);",
+                      "  if (pm.response.json().user.readerId) saveVar('readerId', pm.response.json().user.readerId);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"lector@babel.com\",\n  \"password\": \"lector123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "2. Login Bibliotecario",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('librarianToken', pm.response.json().token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"bibliotecario@babel.com\",\n  \"password\": \"biblio123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "3. Login Admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('adminToken', pm.response.json().token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@babel.com\",\n  \"password\": \"admin123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "4. Préstamos disponibles",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "const pick = pm.response.json().find(b => b.availableCopies > 0);",
+                      "if (pick) saveVar('bookId', pick.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/available"
+              }
+            },
+            {
+              "name": "5. Solicitar préstamo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 201) saveVar('loanId', pm.response.json().id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bookId\": {{bookId}}\n}"
+                },
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "6. Aprobar",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/approve"
+              }
+            },
+            {
+              "name": "7. Devolver",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/return"
+              }
+            },
+            {
+              "name": "8. Registro staff",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/returns"
+              }
+            },
+            {
+              "name": "9. Mis devoluciones",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/returns"
+              }
+            },
+            {
+              "name": "10. Filtrar por lector",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/returns?readerId={{readerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "returns"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "{{readerId}}"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo — Mora",
+          "item": [
+            {
+              "name": "1. Login Lector",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('readerToken', pm.response.json().token);",
+                      "  if (pm.response.json().user.readerId) saveVar('readerId', pm.response.json().user.readerId);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"lector@babel.com\",\n  \"password\": \"lector123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "2. Login Bibliotecario",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('librarianToken', pm.response.json().token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"bibliotecario@babel.com\",\n  \"password\": \"biblio123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "3. Login Admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "if (pm.response.code === 200) {",
+                      "  saveVar('adminToken', pm.response.json().token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@babel.com\",\n  \"password\": \"admin123\"\n}"
+                },
+                "url": "{{baseUrl}}/auth/login"
+              }
+            },
+            {
+              "name": "4. Préstamos disponibles",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "const pick = pm.response.json().find(b => b.availableCopies > 0);",
+                      "if (pick) saveVar('bookId', pick.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/available"
+              }
+            },
+            {
+              "name": "5. Solicitar y aprobar",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "if (pm.response.code === 201) saveVar('loanId', pm.response.json().id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bookId\": {{bookId}}\n}"
+                },
+                "url": "{{baseUrl}}/loans"
+              }
+            },
+            {
+              "name": "6. Aprobar",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}",
+                      "pm.expect(pm.response.json().isOverdue).to.be.false;"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/{{loanId}}/approve"
+              }
+            },
+            {
+              "name": "7. Consultar mora (staff)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{librarianToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/overdue"
+              }
+            },
+            {
+              "name": "8. Mis moras (lector)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{readerToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/loans/overdue"
+              }
+            },
+            {
+              "name": "9. Filtrar mora por lector",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "function saveVar(key, value) {",
+                      "  pm.collectionVariables.set(key, value);",
+                      "  if (pm.environment.name) pm.environment.set(key, value);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/loans/overdue?readerId={{readerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "loans",
+                    "overdue"
+                  ],
+                  "query": [
+                    {
+                      "key": "readerId",
+                      "value": "{{readerId}}"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

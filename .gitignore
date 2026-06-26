@@ -1,34 +1,74 @@
-# Dependencias
-generated/
+# ─── Dependencias ───────────────────────────────────────────────
 node_modules/
 
-# Variables de entorno
-.env
+# Cliente Prisma generado (regenerar con: npm run db:generate)
+generated/
 
-# Compilación TypeScript
+# ─── Variables de entorno (nunca subir secretos) ───────────────
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ─── Build y compilación ──────────────────────────────────────
 dist/
 build/
+out/
+*.tsbuildinfo
 
-# Logs
+# ─── Logs ─────────────────────────────────────────────────────
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Prisma
+# ─── Base de datos local ──────────────────────────────────────
 prisma/dev.db
 prisma/dev.db-journal
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
 
-# VSCode
-.vscode/
-
-# Archivos del sistema
-.DS_Store
-Thumbs.db
-
-# Cobertura de tests
+# ─── Tests y reportes (se regeneran al correr npm run test:api) ─
 coverage/
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+allure-results/
+allure-report/
 
-# Cachés
+# ─── Cachés ───────────────────────────────────────────────────
 .cache/
+.npm/
+.eslintcache
+.parcel-cache/
+.turbo/
+
+# ─── Editores e IDEs ──────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Cursor (config local del editor; no es parte del proyecto)
+.cursor/
+
+# ─── Sistema operativo ────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ─── Docker (volúmenes locales, no la config) ─────────────────
+docker-data/
+
+# ─── Temporales ───────────────────────────────────────────────
+tmp/
+temp/
+*.tmp
