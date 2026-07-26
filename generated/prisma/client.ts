@@ -46,3 +46,43 @@ export { Prisma }
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Reader
+ * 
+ */
+export type Reader = Prisma.ReaderModel
+/**
+ * Model Loan
+ * 
+ */
+export type Loan = Prisma.LoanModel
+/**
+ * Model Book
+ * 
+ */
+export type Book = Prisma.BookModel
+/**
+ * Model BookAuthor
+ * 
+ */
+export type BookAuthor = Prisma.BookAuthorModel
+/**
+ * Model Publisher
+ * 
+ */
+export type Publisher = Prisma.PublisherModel
+/**
+ * Model Author
+ * 
+ */
+export type Author = Prisma.AuthorModel
+/**
+ * Model ReaderStatus
+ * 
+ */
+export type ReaderStatus = Prisma.ReaderStatusModel
+/**
+ * Model Genre
+ * 
+ */
+export type Genre = Prisma.GenreModel

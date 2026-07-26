@@ -48,7 +48,10 @@ router.put(
   authenticate,
   authorize(Role.ADMIN),
   asyncHandler(async (req, res) => {
-    const author = await authorsService.updateAuthor(Number(req.params.id), req.body);
+    const author = await authorsService.updateAuthor(
+      Number(req.params.id),
+      req.body,
+    );
     res.json(author);
   }),
 );

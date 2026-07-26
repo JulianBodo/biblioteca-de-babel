@@ -9,4 +9,12 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.ts'
+export type * from './models/Reader.ts'
+export type * from './models/Loan.ts'
+export type * from './models/Book.ts'
+export type * from './models/BookAuthor.ts'
+export type * from './models/Publisher.ts'
+export type * from './models/Author.ts'
+export type * from './models/ReaderStatus.ts'
+export type * from './models/Genre.ts'
 export type * from './commonInputTypes.ts'

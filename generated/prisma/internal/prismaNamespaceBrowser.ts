@@ -51,7 +51,15 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  Reader: 'Reader',
+  Loan: 'Loan',
+  Book: 'Book',
+  BookAuthor: 'BookAuthor',
+  Publisher: 'Publisher',
+  Author: 'Author',
+  ReaderStatus: 'ReaderStatus',
+  Genre: 'Genre'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -73,10 +81,107 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  name: 'name'
+  passwordHash: 'passwordHash',
+  role: 'role',
+  readerId: 'readerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ReaderScalarFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  dni: 'dni',
+  readerStatusId: 'readerStatusId',
+  lastLoanAt: 'lastLoanAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReaderScalarFieldEnum = (typeof ReaderScalarFieldEnum)[keyof typeof ReaderScalarFieldEnum]
+
+
+export const LoanScalarFieldEnum = {
+  id: 'id',
+  readerId: 'readerId',
+  bookId: 'bookId',
+  status: 'status',
+  loanDate: 'loanDate',
+  dueDate: 'dueDate',
+  returnDate: 'returnDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LoanScalarFieldEnum = (typeof LoanScalarFieldEnum)[keyof typeof LoanScalarFieldEnum]
+
+
+export const BookScalarFieldEnum = {
+  id: 'id',
+  isbn: 'isbn',
+  title: 'title',
+  publicationYear: 'publicationYear',
+  genreId: 'genreId',
+  publisherId: 'publisherId',
+  totalCopies: 'totalCopies',
+  availableCopies: 'availableCopies',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BookScalarFieldEnum = (typeof BookScalarFieldEnum)[keyof typeof BookScalarFieldEnum]
+
+
+export const BookAuthorScalarFieldEnum = {
+  bookId: 'bookId',
+  authorId: 'authorId'
+} as const
+
+export type BookAuthorScalarFieldEnum = (typeof BookAuthorScalarFieldEnum)[keyof typeof BookAuthorScalarFieldEnum]
+
+
+export const PublisherScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PublisherScalarFieldEnum = (typeof PublisherScalarFieldEnum)[keyof typeof PublisherScalarFieldEnum]
+
+
+export const AuthorScalarFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AuthorScalarFieldEnum = (typeof AuthorScalarFieldEnum)[keyof typeof AuthorScalarFieldEnum]
+
+
+export const ReaderStatusScalarFieldEnum = {
+  id: 'id',
+  status: 'status'
+} as const
+
+export type ReaderStatusScalarFieldEnum = (typeof ReaderStatusScalarFieldEnum)[keyof typeof ReaderStatusScalarFieldEnum]
+
+
+export const GenreScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GenreScalarFieldEnum = (typeof GenreScalarFieldEnum)[keyof typeof GenreScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -93,4 +198,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
