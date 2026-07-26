@@ -1,9 +1,9 @@
-import { LoanStatus, Role } from "../../generated/prisma/client.js";
-import * as booksService from "./books.service.js";
-import { config } from "../config.js";
-import { prisma } from "../database.js";
-import { AppError } from "../utils/errors.js";
-import { assertReaderCanBorrow } from "../utils/readerStatus.js";
+import { LoanStatus, Role } from "../../generated/prisma/client.ts";
+import * as booksService from "../books/books.service.ts";
+import { config } from "../config.ts";
+import { prisma } from "../database.ts";
+import { AppError } from "../utils/errors.ts";
+import { assertReaderCanBorrow } from "../utils/readerStatus.ts";
 
 /** Includes estándar: lector con estado + libro con autores, género y editorial. */
 const loanInclude = {
@@ -137,8 +137,7 @@ function enrichLoan<
 }
 
 export async function listLoans(role: Role, readerId?: number) {
-  const where =
-    role === Role.READER && readerId ? { readerId } : undefined;
+  const where = role === Role.READER && readerId ? { readerId } : undefined;
 
   const loans = await prisma.loan.findMany({
     where,

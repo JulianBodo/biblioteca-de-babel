@@ -1,8 +1,8 @@
-import { Role } from "../../generated/prisma/client.js";
-import { prisma } from "../database.js";
-import { AppError } from "../utils/errors.js";
-import { hashPassword, signToken, verifyPassword } from "../utils/auth.js";
-import { getReaderStatusId, ReaderStatusCode } from "../utils/readerStatus.js";
+import { Role } from "../../generated/prisma/client.ts";
+import { prisma } from "../database.ts";
+import { AppError } from "../utils/errors.ts";
+import { hashPassword, signToken, verifyPassword } from "../utils/auth.ts";
+import { getReaderStatusId, ReaderStatusCode } from "../utils/readerStatus.ts";
 
 const userSelect = {
   id: true,
@@ -77,10 +77,7 @@ export async function createUser(input: {
 }) {
   if (input.role === Role.READER) {
     if (!input.firstName || !input.lastName || !input.dni) {
-      throw new AppError(
-        400,
-        "Los lectores requieren nombre, apellido y DNI",
-      );
+      throw new AppError(400, "Los lectores requieren nombre, apellido y DNI");
     }
 
     const activeStatusId = await getReaderStatusId(ReaderStatusCode.ACTIVE);
