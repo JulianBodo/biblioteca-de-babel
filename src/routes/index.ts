@@ -1,11 +1,11 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes.js";
-import booksRoutes from "./books.routes.js";
-import authorsRoutes from "./authors.routes.js";
+import authRoutes from "../auth/auth.routes.js";
+import booksRoutes from "../books/books.routes.js";
+import authorsRoutes from "../authors/authors.routes.js";
 import publishersRoutes from "./publishers.routes.js";
-import genresRoutes from "./genres.routes.js";
+import genresRoutes from "../genres/genres.routes.js";
 import readersRoutes from "./readers.routes.js";
-import loansRoutes from "./loans.routes.js";
+import loansRoutes from "../loans/loans.routes.js";
 
 const router = Router();
 
