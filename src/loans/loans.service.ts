@@ -1,4 +1,4 @@
-import { LoanStatus, Role } from "../../generated/prisma/client.ts";
+import { Author, LoanStatus, Role } from "../../generated/prisma/client.ts";
 import * as booksService from "../books/books.service.ts";
 import { config } from "../config.ts";
 import { prisma } from "../database.ts";
@@ -121,9 +121,14 @@ function enrichLoan<
     loanDate: Date | null;
     dueDate: Date | null;
     returnDate: Date | null;
+    book: {
+      authors: {
+        author: Author;
+    }[];
   },
+}
 >(loan: T) {
-  const formatted = formatLoan(loan as Parameters<typeof formatLoan>[0]);
+  const formatted = formatLoan(loan);
 
   if (loan.status === LoanStatus.ACTIVE) {
     return withActiveLoanMetadata(formatted);

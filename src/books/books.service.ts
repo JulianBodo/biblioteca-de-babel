@@ -10,13 +10,21 @@ const bookInclude = {
   },
 } as const;
 
-function formatBook(book: {
-  authors: { author: { id: number; firstName: string; lastName: string; createdAt: Date; updatedAt: Date } }[];
-  genre: { id: number; name: string; createdAt: Date; updatedAt: Date };
-  publisher: { id: number; name: string; createdAt: Date; updatedAt: Date };
-  [key: string]: unknown;
-}) {
+function formatBook<
+  T extends {
+    authors: {
+      author: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        createdAt: Date;
+        updatedAt: Date;
+      };
+    }[];
+  },
+>(book: T) {
   const { authors: bookAuthors, ...rest } = book;
+
   return {
     ...rest,
     authors: bookAuthors.map(({ author }) => author),
