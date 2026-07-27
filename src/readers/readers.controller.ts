@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as readersService from "./readers.service.js";
 
-// List all reader statuses
+// Listar estados de lectores
 export async function listReaderStatuses(_req: Request, res: Response) {
   const statuses = await readersService.listReaderStatuses();
 
