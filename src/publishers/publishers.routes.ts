@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Role } from "../../generated/prisma/client.js";
 import { authenticate, authorize } from "../middlewares/auth.js";
 import { asyncHandler } from "../middlewares/errorHandler.js";
-import * as publishersService from "../services/publishers.service.js";
+import * as publishersService from "../publishers/publishers.service.js";
 import { AppError } from "../utils/errors.js";
 
 const router = Router();
