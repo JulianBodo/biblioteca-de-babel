@@ -88,7 +88,8 @@ export const parameters: Record<string, OpenAPIV3.ParameterObject> = {
     in: "query",
     required: false,
     schema: { type: "string", enum: ["true"] },
-    description: "Si es `true`, solo libros con ejemplares disponibles (útil para admin/staff)",
+    description:
+      "Si es `true`, solo libros con ejemplares disponibles (útil para admin/staff)",
   },
   fromQuery: {
     name: "from",
@@ -109,7 +110,8 @@ export const parameters: Record<string, OpenAPIV3.ParameterObject> = {
     in: "query",
     required: false,
     schema: { type: "string", enum: ["true"] },
-    description: "Si es `true`, solo devoluciones fuera de plazo (`wasLate: true`)",
+    description:
+      "Si es `true`, solo devoluciones fuera de plazo (`wasLate: true`)",
   },
 };
 
@@ -171,7 +173,15 @@ export const schemas: Record<string, OpenAPIV3.SchemaObject> = {
   },
   ReaderSummary: {
     type: "object",
-    required: ["id", "firstName", "lastName", "email", "dni", "readerStatusId", "readerStatus"],
+    required: [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+      "dni",
+      "readerStatusId",
+      "readerStatus",
+    ],
     properties: {
       id: { type: "integer", example: 3 },
       firstName: { type: "string", example: "Juan" },
@@ -446,7 +456,8 @@ export const schemas: Record<string, OpenAPIV3.SchemaObject> = {
       totalCopies: {
         type: "integer",
         minimum: 1,
-        description: "No puede ser menor que los ejemplares actualmente prestados",
+        description:
+          "No puede ser menor que los ejemplares actualmente prestados",
       },
     },
   },
@@ -479,6 +490,27 @@ export const schemas: Record<string, OpenAPIV3.SchemaObject> = {
       readerStatusId: { type: "integer" },
     },
   },
+
+  CreateReaderRequest: {
+    type: "object",
+    required: ["firstName", "lastName", "email", "dni"],
+    properties: {
+      firstName: { type: "string", example: "Juan" },
+      lastName: { type: "string", example: "Lector" },
+      email: {
+        type: "string",
+        format: "email",
+        example: "juan.lector@babel.com",
+      },
+      dni: { type: "string", example: "30123456" },
+      readerStatusId: {
+        type: "integer",
+        description: "Opcional. Si no se envía, el lector arranca en ACTIVE.",
+        example: 1,
+      },
+    },
+  },
+
   SyncInactivityResponse: {
     type: "object",
     required: ["updated", "readerIds"],

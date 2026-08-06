@@ -44,18 +44,14 @@ export async function updateReader(req: Request, res: Response) {
 
 // Reactivar lector
 export async function reactivateReader(req: Request, res: Response) {
-  const reader = await readersService.reactivateReader(
-    Number(req.params.id),
-  );
+  const reader = await readersService.reactivateReader(Number(req.params.id));
 
   res.json(reader);
 }
 
 // Suspender lector
 export async function suspendReader(req: Request, res: Response) {
-  const reader = await readersService.suspendReader(
-    Number(req.params.id),
-  );
+  const reader = await readersService.suspendReader(Number(req.params.id));
 
   res.json(reader);
 }
@@ -65,4 +61,11 @@ export async function deleteReader(req: Request, res: Response) {
   await readersService.deleteReader(Number(req.params.id));
 
   res.status(204).send();
+}
+
+// Crear un lector
+export async function createReader(req: Request, res: Response) {
+  const reader = await readersService.createReader(req.body);
+
+  res.status(201).json(reader);
 }

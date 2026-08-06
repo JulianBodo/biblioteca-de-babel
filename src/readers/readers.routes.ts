@@ -27,6 +27,13 @@ router.get(
   asyncHandler(readersController.listReaders),
 );
 
+router.post(
+  "/",
+  authenticate,
+  authorize(Role.ADMIN, Role.LIBRARIAN),
+  asyncHandler(readersController.createReader),
+);
+
 router.get(
   "/:id",
   authenticate,

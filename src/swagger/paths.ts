@@ -11,7 +11,8 @@ export const healthPaths: OpenAPIV3.PathsObject = {
     get: {
       tags: ["Disponibilidad"],
       summary: "Health check",
-      description: "Verifica que la API esté en ejecución. No requiere autenticación.",
+      description:
+        "Verifica que la API esté en ejecución. No requiere autenticación.",
       operationId: "getHealth",
       responses: {
         "200": {
@@ -136,7 +137,11 @@ export const authPaths: OpenAPIV3.PathsObject = {
         "403": forbidden403,
         "409": {
           description: "Email o DNI duplicado",
-          content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Error" },
+            },
+          },
         },
       },
     },
@@ -214,7 +219,11 @@ export const bookPaths: OpenAPIV3.PathsObject = {
         "404": notFound404,
         "409": {
           description: "ISBN duplicado",
-          content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Error" },
+            },
+          },
         },
       },
     },
@@ -455,7 +464,11 @@ export const catalogPaths: OpenAPIV3.PathsObject = {
         "403": forbidden403,
         "409": {
           description: "Nombre duplicado",
-          content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Error" },
+            },
+          },
         },
       },
     },
@@ -718,6 +731,43 @@ export const readerPaths: OpenAPIV3.PathsObject = {
         "403": forbidden403,
       },
     },
+    post: {
+      tags: ["Lectores"],
+      summary: "Crear lector",
+      description: "Solo **ADMIN** y **LIBRARIAN**.",
+      operationId: "createReader",
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/CreateReaderRequest" },
+          },
+        },
+      },
+      responses: {
+        "201": {
+          description: "Lector creado",
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ReaderDetail" },
+            },
+          },
+        },
+        "400": badRequest400,
+        "401": bearer401,
+        "403": forbidden403,
+        "404": notFound404,
+        "409": {
+          description: "Email o DNI duplicado",
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Error" },
+            },
+          },
+        },
+      },
+    },
   },
   "/api/readers/{id}": {
     get: {
@@ -774,8 +824,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     delete: {
       tags: ["Lectores"],
       summary: "Eliminar lector",
-      description:
-        "Solo **ADMIN**. Falla si tiene préstamos PENDING o ACTIVE.",
+      description: "Solo **ADMIN**. Falla si tiene préstamos PENDING o ACTIVE.",
       operationId: "deleteReader",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -792,8 +841,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     patch: {
       tags: ["Lectores"],
       summary: "Reactivar lector",
-      description:
-        "Solo **ADMIN** y **LIBRARIAN**. Cambia el estado a ACTIVE.",
+      description: "Solo **ADMIN** y **LIBRARIAN**. Cambia el estado a ACTIVE.",
       operationId: "reactivateReader",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],

@@ -23,9 +23,7 @@ function subtractMonths(date: Date, months: number) {
 
 export async function listReaders(status?: string) {
   return prisma.reader.findMany({
-    where: status
-      ? { readerStatus: { status } }
-      : undefined,
+    where: status ? { readerStatus: { status } } : undefined,
     include: readerInclude,
     orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
   });
@@ -172,4 +170,57 @@ export async function deleteReader(id: number) {
 
 export async function listReaderStatuses() {
   return prisma.readerStatus.findMany({ orderBy: { status: "asc" } });
+}
+
+export async function createReader(input: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  dni: string;
+  readerStatusId?: number;
+}) {
+  const { firstName, lastName, email, dni, readerStatusId } = input;
+
+  if (!firstName || !lastName || !email || !dni) {
+    throw new AppError(
+      400,
+      "firstName, lastName, email y dni son obligatorios",
+    );
+  }
+
+  let statusId = readerStatusId;
+
+  if (statusId !== undefined) {
+    const status = await prisma.readerStatus.findUnique({
+      where: { id: statusId },
+    });
+    if (!status) {
+      throw new AppError(404, "Estado de lector no encontrado");
+    }
+  } else {
+    statusId = await getReaderStatusId(ReaderStatusCode.ACTIVE);
+  }
+
+  try {
+    return await prisma.reader.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        dni,
+        readerStatusId: statusId,
+      },
+      include: readerInclude,
+    });
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "P2002"
+    ) {
+      throw new AppError(409, "Ya existe un lector con ese email o DNI");
+    }
+    throw error;
+  }
 }
