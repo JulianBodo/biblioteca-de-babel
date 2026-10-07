@@ -128,7 +128,9 @@ export async function syncInactiveReaders() {
     },
   });
 
-  const toMarkInactive = candidates.filter((reader) => {
+  type ReaderCandidate = typeof candidates[number];
+
+  const toMarkInactive = candidates.filter((reader: ReaderCandidate) => {
     const lastActivity = reader.lastLoanAt ?? reader.createdAt;
     return lastActivity < cutoff;
   });
@@ -138,13 +140,13 @@ export async function syncInactiveReaders() {
   }
 
   await prisma.reader.updateMany({
-    where: { id: { in: toMarkInactive.map((r) => r.id) } },
+    where: { id: { in: toMarkInactive.map((r: ReaderCandidate) => r.id) } },
     data: { readerStatusId: inactiveStatusId },
   });
 
   return {
     updated: toMarkInactive.length,
-    readerIds: toMarkInactive.map((r) => r.id),
+    readerIds: toMarkInactive.map((r: ReaderCandidate) => r.id),
   };
 }
 
@@ -188,15 +190,16 @@ export async function createReader(input: {
     );
   }
 
-  let statusId = readerStatusId;
+  let statusId: number;
 
-  if (statusId !== undefined) {
+  if (readerStatusId !== undefined) {
     const status = await prisma.readerStatus.findUnique({
-      where: { id: statusId },
+      where: { id: readerStatusId },
     });
     if (!status) {
       throw new AppError(404, "Estado de lector no encontrado");
     }
+    statusId = readerStatusId;
   } else {
     statusId = await getReaderStatusId(ReaderStatusCode.ACTIVE);
   }
