@@ -4,8 +4,8 @@ import { prisma } from "../src/database.js";
 import { hashPassword } from "../src/utils/auth.js";
 
 async function main() {
-  await prisma.loan.deleteMany();
-  await prisma.$executeRaw`UPDATE "Book" SET "availableCopies" = "totalCopies"`;
+  //await prisma.loan.deleteMany();
+  //await prisma.$executeRaw`UPDATE "Book" SET "availableCopies" = "totalCopies"`;
 
   const activeStatus = await prisma.readerStatus.upsert({
     where: { status: "ACTIVE" },
@@ -25,16 +25,49 @@ async function main() {
     create: { status: "INACTIVE" },
   });
 
-  const fiction = await prisma.genre.upsert({
-    where: { name: "Ficción" },
-    update: {},
-    create: { name: "Ficción" },
-  });
+  const bookGenres = [
+    "Acción y Aventura",
+    "Arte, Música y Fotografía",
+    "Biografía, Autobiografía y Memorias",
+    "Ciencia ficción",
+    "Ciencias Exactas y Naturales",
+    "Ciencias Sociales y Política",
+    "Cómic, Manga y Novela Gráfica",
+    "Ensayo y Divulgación",
+    "Fantasía",
+    "Ficción Clásica",
+    "Filosofía y Ética",
+    "Historia y Geografía",
+    "Humor y Sátira",
+    "Infantil",
+    "Juvenil",
+    "Libros de Texto y Referencia",
+    "Manualidades, Cocina y Estilo de Vida",
+    "Misterio, Policial y Thriller",
+    "Mitos, Leyendas y Fábulas",
+    "Novela Histórica",
+    "Poesía y Lírica",
+    "Psicología y Desarrollo Personal",
+    "Realismo Mágico y Literatura Contemporánea",
+    "Religión, Teología y Espiritualidad",
+    "Romance y Erótica",
+    "Salud, Medicina y Nutrición",
+    "Teatro y Dramaturgia",
+    "Tecnología, Ingeniería e Informática",
+    "Terror y Horror",
+    "Viajes y Guías",
+  ];
 
-  await prisma.genre.upsert({
-    where: { name: "Ensayo" },
-    update: {},
-    create: { name: "Ensayo" },
+  for (const name of bookGenres) {
+    await prisma.genre.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
+
+  const fiction = await prisma.genre.findUniqueOrThrow({
+    where: { name: "Ficción Clásica" },
   });
 
   const publisher = await prisma.publisher.upsert({
