@@ -4,6 +4,8 @@ import { prisma } from "./database.js";
 
 /** Conecta Prisma y levanta el servidor HTTP. */
 async function main() {
+  console.log("[coverage] PORT =", process.env.PORT);
+  console.log("[coverage] NODE_V8_COVERAGE =", process.env.NODE_V8_COVERAGE);
   await prisma.$connect();
   console.log("Conectado a PostgreSQL");
 

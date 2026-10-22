@@ -61,13 +61,9 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: `npx tsx src/init.ts`,
+    command: "npx tsx src/init.ts",
     url: `${baseURL}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: {
-      ...process.env,
-      PORT: port,
-    },
   },
 });
