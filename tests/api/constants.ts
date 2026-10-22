@@ -1,6 +1,5 @@
 export const CREDENTIALS = {
   admin: { email: "admin@babel.com", password: "admin123" },
-  librarian: { email: "bibliotecario@babel.com", password: "biblio123" },
   reader: { email: "lector@babel.com", password: "lector123" },
   inactiveReader: { email: "inactivo@babel.com", password: "inactivo123" },
 } as const;

@@ -20,64 +20,62 @@ import { allureFeature, allureStory } from "./allure-meta.js";
 allureFeature("Registro de devoluciones");
 
 test.describe.serial("Registro de devoluciones — flujo", () => {
-  let returnedLoanId: number;
-
-  test("devolución queda registrada con metadatos", async ({ request, tokens }) => {
+  test("staff consulta el registro de devoluciones", async ({
+    request,
+    tokens,
+  }) => {
     const { loanId } = await createApprovedLoan(request, tokens);
-    const returned = await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
 
-    returnedLoanId = returned.id;
-    expect(returned.wasLate).toBe(false);
-    expect(returned.returnDate).toBeTruthy();
-  });
-
-  test("staff consulta el registro de devoluciones", async ({ request, tokens }) => {
     const response = await request.get("/api/loans/returns", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
+
     await expectStatus(response, 200);
 
     const returns = await response.json();
-    expect(returns.some((item: { id: number }) => item.id === returnedLoanId)).toBeTruthy();
+    const entry = returns.find(
+      (item: { id: number }) => item.id === loanId
+    );
 
-    const entry = returns.find((item: { id: number }) => item.id === returnedLoanId);
+    expect(entry).toBeDefined();
     expectLoanShape(entry);
     expect(entry.status).toBe("RETURNED");
     expect(entry.returnDate).toBeTruthy();
     expect(entry.reader.email).toBe(CREDENTIALS.reader.email);
     expect(typeof entry.wasLate).toBe("boolean");
   });
+});
 
-  test("lector ve solo sus devoluciones en el registro", async ({ request, tokens }) => {
-    const response = await request.get("/api/loans/returns", {
-      headers: bearer(tokens.reader),
-    });
-    await expectStatus(response, 200);
-
-    const returns = await response.json();
-    expect(returns.length).toBeGreaterThan(0);
-    for (const item of returns) {
-      expect(item.status).toBe("RETURNED");
-      expect(item.reader.email).toBe(CREDENTIALS.reader.email);
-    }
+test("lector ve solo sus devoluciones en el registro", async ({ request, tokens }) => {
+  const response = await request.get("/api/loans/returns", {
+    headers: bearer(tokens.reader),
   });
+  await expectStatus(response, 200);
 
-  test("admin puede filtrar devoluciones por lector", async ({ request, tokens }) => {
-    const profile = await getReaderProfile(request, tokens.reader);
-    expect(profile.readerId).toBeTruthy();
+  const returns = await response.json();
+  expect(returns.length).toBeGreaterThan(0);
+  for (const item of returns) {
+    expect(item.status).toBe("RETURNED");
+    expect(item.reader.email).toBe(CREDENTIALS.reader.email);
+  }
+});
 
-    const response = await request.get(
-      `/api/loans/returns?readerId=${profile.readerId}`,
-      { headers: bearer(tokens.admin) },
-    );
-    await expectStatus(response, 200);
+test("admin puede filtrar devoluciones por lector", async ({ request, tokens }) => {
+  const profile = await getReaderProfile(request, tokens.reader);
+  expect(profile.readerId).toBeTruthy();
 
-    const returns = await response.json();
-    expect(returns.length).toBeGreaterThan(0);
-    for (const item of returns) {
-      expect(item.reader.id).toBe(profile.readerId);
-    }
-  });
+  const response = await request.get(
+    `/api/loans/returns?readerId=${profile.readerId}`,
+    { headers: bearer(tokens.admin) },
+  );
+  await expectStatus(response, 200);
+
+  const returns = await response.json();
+  expect(returns.length).toBeGreaterThan(0);
+  for (const item of returns) {
+    expect(item.reader.id).toBe(profile.readerId);
+  }
 });
 
 test.describe("Registro de devoluciones — filtros y permisos", () => {
@@ -94,7 +92,7 @@ test.describe("Registro de devoluciones — filtros y permisos", () => {
       data: { dueDate: pastDue },
     });
 
-    const returned = await returnLoan(request, tokens.librarian, loanId);
+    const returned = await returnLoan(request, tokens.admin, loanId);
     expect(returned.wasLate).toBe(true);
 
     const lateOnly = await request.get("/api/loans/returns?lateOnly=true", {

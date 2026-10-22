@@ -98,24 +98,6 @@ test.describe("Libros", () => {
     );
   });
 
-  test("bibliotecario no puede crear libros", async ({ request, tokens }) => {
-    const seed = await getSeedContext(request, tokens.admin);
-    await expectStatus(
-      await request.post("/api/books", {
-        headers: bearer(tokens.librarian),
-        data: {
-          isbn: "978-denied",
-          title: "Denegado",
-          publicationYear: 2020,
-          authorIds: [seed.authors[0]!.id],
-          publisherId: seed.publishers[0]!.id,
-          genreId: seed.genres[0]!.id,
-        },
-      }),
-      403,
-    );
-  });
-
   test("crear libro sin campos obligatorios responde 400", async ({
     request,
     tokens,

@@ -18,7 +18,7 @@ test.describe("Catálogos — Autores", () => {
     request,
     tokens,
   }) => {
-    for (const token of [tokens.admin, tokens.librarian, tokens.reader]) {
+    for (const token of [tokens.admin, tokens.reader]) {
       const response = await request.get("/api/authors", { headers: bearer(token) });
       await expectStatus(response, 200);
       expect((await response.json()).length).toBeGreaterThan(0);

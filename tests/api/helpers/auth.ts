@@ -19,18 +19,13 @@ export async function login(
 }
 
 export async function loginAllRoles(request: APIRequestContext) {
-  const [admin, librarian, reader, inactiveReader] = await Promise.all([
+  const [admin, reader, inactiveReader] = await Promise.all([
     login(request, CREDENTIALS.admin.email, CREDENTIALS.admin.password),
-    login(request, CREDENTIALS.librarian.email, CREDENTIALS.librarian.password),
     login(request, CREDENTIALS.reader.email, CREDENTIALS.reader.password),
-    login(
-      request,
-      CREDENTIALS.inactiveReader.email,
-      CREDENTIALS.inactiveReader.password,
-    ),
+    login(request, CREDENTIALS.inactiveReader.email, CREDENTIALS.inactiveReader.password),
   ]);
 
-  return { admin, librarian, reader, inactiveReader };
+  return { admin, reader, inactiveReader };
 }
 
 export async function getReaderProfile(request: APIRequestContext, token: string) {
@@ -41,10 +36,10 @@ export async function getReaderProfile(request: APIRequestContext, token: string
 
 export async function getInactiveReaderId(
   request: APIRequestContext,
-  librarianToken: string,
+  adminToken: string,
 ) {
   const response = await request.get("/api/readers?status=INACTIVE", {
-    headers: bearer(librarianToken),
+    headers: bearer(adminToken),
   });
   expect(response.ok()).toBeTruthy();
   const readers = (await response.json()) as { id: number; email: string }[];

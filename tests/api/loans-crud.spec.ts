@@ -10,6 +10,7 @@ import {
   rejectLoan,
   expectJsonError,
   expectStatus,
+  expectNoContent,
 } from "./fixtures.js";
 import { allureFeature } from "./allure-meta.js";
 
@@ -26,7 +27,7 @@ test.describe.serial("CRUD — staff crea y elimina pendiente", () => {
     const book = await pickBookForLoan(request, tokens.admin, tokens.reader);
 
     const response = await request.post("/api/loans", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
       data: { bookId: book.id, readerId: profile.readerId },
     });
     await expectStatus(response, 201);
@@ -49,9 +50,9 @@ test.describe.serial("CRUD — staff crea y elimina pendiente", () => {
     );
   });
 
-  test("bibliotecario elimina préstamo pendiente", async ({ request, tokens }) => {
+  test("admin elimina préstamo pendiente", async ({ request, tokens }) => {
     const response = await request.delete(`/api/loans/${loanId}`, {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     expect(response.status()).toBe(204);
 
@@ -72,7 +73,7 @@ test.describe.serial("CRUD — actualizar vencimiento", () => {
 
   test("staff extiende dueDate", async ({ request, tokens }) => {
     const before = await request.get(`/api/loans/${loanId}`, {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     const originalDue = new Date((await before.json()).dueDate);
 
@@ -80,7 +81,7 @@ test.describe.serial("CRUD — actualizar vencimiento", () => {
     extended.setDate(extended.getDate() + 7);
 
     const response = await request.put(`/api/loans/${loanId}`, {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
       data: { dueDate: extended.toISOString() },
     });
     await expectStatus(response, 200);
@@ -93,7 +94,7 @@ test.describe.serial("CRUD — actualizar vencimiento", () => {
   test("dueDate inválido responde 400", async ({ request, tokens }) => {
     await expectJsonError(
       await request.put(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
         data: { dueDate: "fecha-invalida" },
       }),
       400,
@@ -103,7 +104,7 @@ test.describe.serial("CRUD — actualizar vencimiento", () => {
 
   test("dueDate anterior a loanDate responde 400", async ({ request, tokens }) => {
     const detail = await request.get(`/api/loans/${loanId}`, {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     const loanDate = new Date((await detail.json()).loanDate);
     const beforeLoan = new Date(loanDate);
@@ -111,7 +112,7 @@ test.describe.serial("CRUD — actualizar vencimiento", () => {
 
     await expectJsonError(
       await request.put(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
         data: { dueDate: beforeLoan.toISOString() },
       }),
       400,
@@ -133,70 +134,63 @@ test.describe.serial("CRUD — actualizar vencimiento", () => {
     request,
     tokens,
   }) => {
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
 
-    await expectStatus(
-      await request.delete(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.librarian),
-      }),
-      403,
-    );
-
-    expect(
-      (await request.delete(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.admin),
-      })).status(),
-    ).toBe(204);
-  });
-});
-
-test.describe("CRUD — validaciones delete/update", () => {
-  test("no se puede eliminar préstamo activo", async ({ request, tokens }) => {
-    const { loanId } = await createApprovedLoan(request, tokens);
-
-    await expectJsonError(
+    await expectNoContent(
       await request.delete(`/api/loans/${loanId}`, {
         headers: bearer(tokens.admin),
       }),
-      400,
-      "activo",
-    );
-
-    await returnLoan(request, tokens.librarian, loanId);
-  });
-
-  test("PUT en préstamo pendiente responde 400", async ({ request, tokens }) => {
-    const { loan } = await createPendingLoan(request, tokens);
-
-    await expectJsonError(
-      await request.put(`/api/loans/${loan.id}`, {
-        headers: bearer(tokens.librarian),
-        data: { dueDate: new Date().toISOString() },
-      }),
-      400,
-      "activos",
-    );
-
-    await rejectLoan(request, tokens.librarian, loan.id);
-  });
-
-  test("DELETE préstamo inexistente responde 404", async ({ request, tokens }) => {
-    await expectJsonError(
-      await request.delete("/api/loans/999999", {
-        headers: bearer(tokens.admin),
-      }),
-      404,
     );
   });
 
-  test("lector no puede eliminar préstamos", async ({ request, tokens }) => {
-    const { loan } = await createPendingLoan(request, tokens);
-    await expectStatus(
-      await request.delete(`/api/loans/${loan.id}`, {
-        headers: bearer(tokens.reader),
-      }),
-      403,
-    );
-    await rejectLoan(request, tokens.librarian, loan.id);
+  test.describe("CRUD — validaciones delete/update", () => {
+    test("no se puede eliminar préstamo activo", async ({ request, tokens }) => {
+      const { loanId } = await createApprovedLoan(request, tokens);
+
+      await expectJsonError(
+        await request.delete(`/api/loans/${loanId}`, {
+          headers: bearer(tokens.admin),
+        }),
+        400,
+        "activo",
+      );
+
+      await returnLoan(request, tokens.admin, loanId);
+    });
+
+    test("PUT en préstamo pendiente responde 400", async ({ request, tokens }) => {
+      const { loan } = await createPendingLoan(request, tokens);
+
+      await expectJsonError(
+        await request.put(`/api/loans/${loan.id}`, {
+          headers: bearer(tokens.admin),
+          data: { dueDate: new Date().toISOString() },
+        }),
+        400,
+        "activos",
+      );
+
+      await rejectLoan(request, tokens.admin, loan.id);
+    });
+
+    test("DELETE préstamo inexistente responde 404", async ({ request, tokens }) => {
+      await expectJsonError(
+        await request.delete("/api/loans/999999", {
+          headers: bearer(tokens.admin),
+        }),
+        404,
+      );
+    });
+
+    test("lector no puede eliminar préstamos", async ({ request, tokens }) => {
+      const { loan } = await createPendingLoan(request, tokens);
+      await expectStatus(
+        await request.delete(`/api/loans/${loan.id}`, {
+          headers: bearer(tokens.reader),
+        }),
+        403,
+      );
+      await rejectLoan(request, tokens.admin, loan.id);
+    });
   });
 });

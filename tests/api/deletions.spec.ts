@@ -115,7 +115,7 @@ test.describe("Libros — delete con registros aislados", () => {
       "pendientes o activos",
     );
 
-    await rejectLoan(request, tokens.librarian, loan.id);
+    await rejectLoan(request, tokens.admin, loan.id);
     await expectNoContent(
       await request.delete(`/api/loans/${loan.id}`, {
         headers: bearer(tokens.admin),
@@ -134,7 +134,7 @@ test.describe("Libros — delete con registros aislados", () => {
       "pendientes o activos",
     );
 
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
     await expectNoContent(
       await request.delete(`/api/loans/${loanId}`, {
         headers: bearer(tokens.admin),
@@ -164,7 +164,7 @@ test.describe("Lectores — delete con registros aislados", () => {
     const { userId, readerId } = await createDisposableReaderUser(request, tokens.admin);
 
     const create = await request.post("/api/loans", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
       data: { bookId: stack.book.id, readerId },
     });
     await expectStatus(create, 201);
@@ -172,7 +172,7 @@ test.describe("Lectores — delete con registros aislados", () => {
 
     await expectStatus(
       await request.patch(`/api/loans/${loanId}/approve`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
       }),
       200,
     );
@@ -185,7 +185,7 @@ test.describe("Lectores — delete con registros aislados", () => {
       "pendientes o activos",
     );
 
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
     await expectNoContent(
       await request.delete(`/api/loans/${loanId}`, {
         headers: bearer(tokens.admin),
@@ -200,7 +200,7 @@ test.describe("Lectores — delete con registros aislados", () => {
     const { userId, readerId } = await createDisposableReaderUser(request, tokens.admin);
 
     const create = await request.post("/api/loans", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
       data: { bookId: stack.book.id, readerId },
     });
     await expectStatus(create, 201);
@@ -216,7 +216,7 @@ test.describe("Lectores — delete con registros aislados", () => {
 
     await expectNoContent(
       await request.delete(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
       }),
     );
     await tearDownIsolatedBookStack(request, tokens.admin, stack);
@@ -227,51 +227,25 @@ test.describe("Lectores — delete con registros aislados", () => {
 test.describe("Préstamos — delete con registros aislados", () => {
   allureStory("Estados finalizados");
 
-  test("admin elimina préstamo REJECTED aislado → 204", async ({ request, tokens }) => {
-    const stack = await createIsolatedBookStack(request, tokens.admin);
-    const { userId, readerId } = await createDisposableReaderUser(request, tokens.admin);
-
-    const create = await request.post("/api/loans", {
-      headers: bearer(tokens.librarian),
-      data: { bookId: stack.book.id, readerId },
-    });
-    await expectStatus(create, 201);
-    const loanId = (await create.json()).id as number;
-
-    await rejectLoan(request, tokens.librarian, loanId);
-
-    await expectNoContent(
-      await request.delete(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.admin),
-      }),
-    );
-
-    await tearDownIsolatedBookStack(request, tokens.admin, stack);
-    await deleteUserIfExists(request, tokens.admin, userId);
-  });
-
-  test("bibliotecario no puede eliminar préstamo REJECTED → 403", async ({
+  test("admin elimina préstamo REJECTED aislado → 204", async ({
     request,
     tokens,
   }) => {
     const stack = await createIsolatedBookStack(request, tokens.admin);
-    const { userId, readerId } = await createDisposableReaderUser(request, tokens.admin);
+    const { userId, readerId } = await createDisposableReaderUser(
+      request,
+      tokens.admin,
+    );
 
     const create = await request.post("/api/loans", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
       data: { bookId: stack.book.id, readerId },
     });
     await expectStatus(create, 201);
+
     const loanId = (await create.json()).id as number;
 
-    await rejectLoan(request, tokens.librarian, loanId);
-
-    await expectStatus(
-      await request.delete(`/api/loans/${loanId}`, {
-        headers: bearer(tokens.librarian),
-      }),
-      403,
-    );
+    await rejectLoan(request, tokens.admin, loanId);
 
     await expectNoContent(
       await request.delete(`/api/loans/${loanId}`, {

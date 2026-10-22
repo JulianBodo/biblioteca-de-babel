@@ -13,7 +13,7 @@ import { allureFeature } from "./allure-meta.js";
 allureFeature("Autenticación");
 
 test.describe("Auth", () => {
-  test("login exitoso para admin, bibliotecario y lector", async ({ request }) => {
+  test("login exitoso para admin y lector", async ({ request }) => {
     for (const cred of Object.values(CREDENTIALS)) {
       const response = await request.post("/api/auth/login", { data: cred });
       await expectStatus(response, 200);
@@ -94,26 +94,6 @@ test.describe("Auth", () => {
     expect(del.status()).toBe(204);
   });
 
-  test("admin puede crear bibliotecario", async ({ request, tokens }) => {
-    const suffix = uniqueSuffix();
-    const create = await request.post("/api/auth/users", {
-      headers: bearer(tokens.admin),
-      data: {
-        email: `biblio.${suffix}@test.com`,
-        password: "test1234",
-        role: "LIBRARIAN",
-      },
-    });
-    await expectStatus(create, 201);
-    const created = await create.json();
-    expect(created.role).toBe("LIBRARIAN");
-    expect(created.reader).toBeNull();
-
-    await request.delete(`/api/auth/users/${created.id}`, {
-      headers: bearer(tokens.admin),
-    });
-  });
-
   test("no se puede crear usuario con email duplicado", async ({ request, tokens }) => {
     await expectJsonError(
       await request.post("/api/auth/users", {
@@ -139,25 +119,6 @@ test.describe("Auth", () => {
       }),
       400,
       "administrador",
-    );
-  });
-
-  test("bibliotecario no puede gestionar usuarios", async ({ request, tokens }) => {
-    await expectStatus(
-      await request.get("/api/auth/users", { headers: bearer(tokens.librarian) }),
-      403,
-    );
-
-    await expectStatus(
-      await request.post("/api/auth/users", {
-        headers: bearer(tokens.librarian),
-        data: {
-          email: "hack@test.com",
-          password: "hack1234",
-          role: "ADMIN",
-        },
-      }),
-      403,
     );
   });
 

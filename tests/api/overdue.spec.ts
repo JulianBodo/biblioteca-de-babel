@@ -34,7 +34,7 @@ test.describe.serial("Mora — aviso al lector", () => {
     expect(loan.daysOverdue).toBe(0);
     expect(loan.overdueNotice).toBeNull();
 
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
   });
 
   test("lector en mora recibe aviso con días vencidos", async ({ request, tokens }) => {
@@ -65,7 +65,7 @@ test.describe.serial("Mora — aviso al lector", () => {
 
   test("staff consulta morosos del sistema", async ({ request, tokens }) => {
     const response = await request.get("/api/loans/overdue", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(response, 200);
 
@@ -131,7 +131,7 @@ test.describe.serial("Mora — aviso al lector", () => {
     expect(loan.overdueNotice).toContain("mora");
     expect(loan.overdueNotice).toContain(String(loan.daysOverdue));
 
-    await returnLoan(request, tokens.librarian, overdueLoanId);
+    await returnLoan(request, tokens.admin, overdueLoanId);
   });
 });
 
@@ -156,7 +156,7 @@ test.describe("Mora — permisos", () => {
       (await response.json()).some((item: { id: number }) => item.id === loanId),
     ).toBeFalsy();
 
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
   });
 
   test("readerId inválido responde 400", async ({ request, tokens }) => {

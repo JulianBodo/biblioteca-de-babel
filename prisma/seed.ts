@@ -141,17 +141,6 @@ async function main() {
     },
   });
 
-  const librarianHash = await hashPassword("biblio123");
-  await prisma.user.upsert({
-    where: { email: "bibliotecario@babel.com" },
-    update: {},
-    create: {
-      email: "bibliotecario@babel.com",
-      passwordHash: librarianHash,
-      role: Role.LIBRARIAN,
-    },
-  });
-
   const readerHash = await hashPassword("lector123");
   const reader = await prisma.reader.upsert({
     where: { email: "lector@babel.com" },
@@ -203,7 +192,6 @@ async function main() {
 
   console.log("Seed completado");
   console.log("Admin: admin@babel.com / admin123");
-  console.log("Bibliotecario: bibliotecario@babel.com / biblio123");
   console.log("Lector activo: lector@babel.com / lector123");
   console.log("Lector inactivo: inactivo@babel.com / inactivo123");
 }

@@ -47,9 +47,9 @@ test.describe.serial("Flujo E2E: solicitud → aprobación → devolución", () 
     loanId = loan.id;
   });
 
-  test("bibliotecario lista pendientes incluye la solicitud", async ({ request, tokens }) => {
+  test("admin lista pendientes incluye la solicitud", async ({ request, tokens }) => {
     const response = await request.get("/api/loans/pending", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(response, 200);
     expect((await response.json()).some((l: { id: number }) => l.id === loanId)).toBe(true);
@@ -72,7 +72,7 @@ test.describe.serial("Flujo E2E: solicitud → aprobación → devolución", () 
 
     const loan = await (
       await request.patch(`/api/loans/${loanId}/approve`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
       })
     ).json();
 
@@ -104,7 +104,7 @@ test.describe.serial("Flujo E2E: solicitud → aprobación → devolución", () 
       await request.get(`/api/books/${bookId}`, { headers: bearer(tokens.admin) })
     ).json()).availableCopies;
 
-    const loan = await returnLoan(request, tokens.librarian, loanId);
+    const loan = await returnLoan(request, tokens.admin, loanId);
     expectReturnedLoanMetadata(loan);
     expect(loan.wasLate).toBe(false);
 
@@ -120,7 +120,7 @@ test.describe("Rechazos y permisos", () => {
 
   test("rechazar solicitud pendiente → REJECTED", async ({ request, tokens }) => {
     const { loan } = await createPendingLoan(request, tokens);
-    await rejectLoan(request, tokens.librarian, loan.id);
+    await rejectLoan(request, tokens.admin, loan.id);
   });
 
   test("solicitud duplicada del mismo libro → 409", async ({ request, tokens }) => {
@@ -135,7 +135,7 @@ test.describe("Rechazos y permisos", () => {
       409,
     );
 
-    await rejectLoan(request, tokens.librarian, loan.id);
+    await rejectLoan(request, tokens.admin, loan.id);
   });
 
   test("staff crea préstamo con readerId → 201", async ({ request, tokens }) => {
@@ -146,7 +146,7 @@ test.describe("Rechazos y permisos", () => {
       data: { bookId: book.id, readerId: profile.readerId },
     });
     await expectStatus(response, 201);
-    await rejectLoan(request, tokens.librarian, (await response.json()).id);
+    await rejectLoan(request, tokens.admin, (await response.json()).id);
   });
 
   test("staff sin readerId → 400", async ({ request, tokens }) => {
@@ -190,7 +190,7 @@ test.describe("Rechazos y permisos", () => {
       403,
     );
 
-    await rejectLoan(request, tokens.librarian, loanId);
+    await rejectLoan(request, tokens.admin, loanId);
     await expectNoContent(
       await request.delete(`/api/auth/users/${otherUser.id}`, {
         headers: bearer(tokens.admin),
@@ -254,7 +254,7 @@ test.describe("Validaciones de ciclo de vida", () => {
       "ejemplares",
     );
 
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
     await expectNoContent(
       await request.delete(`/api/loans/${loanId}`, { headers: bearer(tokens.admin) }),
     );
@@ -267,24 +267,24 @@ test.describe("Validaciones de ciclo de vida", () => {
     const { loanId } = await createApprovedLoan(request, tokens);
     await expectJsonError(
       await request.patch(`/api/loans/${loanId}/approve`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
       }),
       400,
       "pendientes",
     );
-    await returnLoan(request, tokens.librarian, loanId);
+    await returnLoan(request, tokens.admin, loanId);
   });
 
   test("devolver pendiente → 400", async ({ request, tokens }) => {
     const { loan } = await createPendingLoan(request, tokens);
     await expectJsonError(
       await request.patch(`/api/loans/${loan.id}/return`, {
-        headers: bearer(tokens.librarian),
+        headers: bearer(tokens.admin),
       }),
       400,
       "activos",
     );
-    await rejectLoan(request, tokens.librarian, loan.id);
+    await rejectLoan(request, tokens.admin, loan.id);
   });
 
   test("id no numérico → 404", async ({ request, tokens }) => {
@@ -298,7 +298,7 @@ test.describe("Validaciones de ciclo de vida", () => {
     for (const action of ["approve", "reject", "return"]) {
       await expectJsonError(
         await request.patch(`/api/loans/999999/${action}`, {
-          headers: bearer(tokens.librarian),
+          headers: bearer(tokens.admin),
         }),
         404,
       );

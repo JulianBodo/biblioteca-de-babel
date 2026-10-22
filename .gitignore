@@ -9,6 +9,7 @@ generated/
 .env.local
 .env.*.local
 !.env.example
+.env.test
 
 # ─── Build y compilación ──────────────────────────────────────
 dist/

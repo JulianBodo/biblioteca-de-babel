@@ -128,7 +128,7 @@ export async function createLoan(req: Request, res: Response) {
     }
 
     readerId = req.user!.readerId;
-  } else if (role === Role.ADMIN || role === Role.LIBRARIAN) {
+  } else if (role === Role.ADMIN ) {
     if (bodyReaderId === undefined) {
       throw new AppError(400, "readerId es obligatorio");
     }

@@ -11,7 +11,7 @@ router.get("/", authenticate, asyncHandler(loansController.listLoans));
 router.get(
   "/pending",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(loansController.listPendingLoans),
 );
 
@@ -36,35 +36,35 @@ router.post("/", authenticate, asyncHandler(loansController.createLoan));
 router.put(
   "/:id",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(loansController.updateLoan),
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(loansController.deleteLoan),
 );
 
 router.patch(
   "/:id/approve",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(loansController.approveLoan),
 );
 
 router.patch(
   "/:id/reject",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(loansController.rejectLoan),
 );
 
 router.patch(
   "/:id/return",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(loansController.returnLoan),
 );
 

@@ -32,11 +32,11 @@ export async function createPendingLoan(
 
 export async function approveLoan(
   request: APIRequestContext,
-  librarianToken: string,
+  adminToken: string,
   loanId: number,
 ) {
   const response = await request.patch(`/api/loans/${loanId}/approve`, {
-    headers: bearer(librarianToken),
+    headers: bearer(adminToken),
   });
   await expectStatus(response, 200);
   const loan = await response.json();
@@ -56,17 +56,17 @@ export async function createApprovedLoan(
     tokens,
     bookId,
   );
-  const approved = await approveLoan(request, tokens.librarian, loan.id);
+  const approved = await approveLoan(request, tokens.admin, loan.id);
   return { loanId: loan.id as number, bookId: resolvedBookId, loan: approved };
 }
 
 export async function rejectLoan(
   request: APIRequestContext,
-  librarianToken: string,
+  adminToken: string,
   loanId: number,
 ) {
   const response = await request.patch(`/api/loans/${loanId}/reject`, {
-    headers: bearer(librarianToken),
+    headers: bearer(adminToken),
   });
   await expectStatus(response, 200);
   expect((await response.json()).status).toBe(LOAN_STATUS.REJECTED);
@@ -74,11 +74,11 @@ export async function rejectLoan(
 
 export async function returnLoan(
   request: APIRequestContext,
-  librarianToken: string,
+  adminToken: string,
   loanId: number,
 ) {
   const response = await request.patch(`/api/loans/${loanId}/return`, {
-    headers: bearer(librarianToken),
+    headers: bearer(adminToken),
   });
   await expectStatus(response, 200);
   const loan = await response.json();

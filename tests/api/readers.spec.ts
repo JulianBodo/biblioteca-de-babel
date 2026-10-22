@@ -16,7 +16,7 @@ allureFeature("Lectores");
 test.describe("Lectores", () => {
   test("staff puede listar estados y lectores", async ({ request, tokens }) => {
     const statuses = await request.get("/api/readers/statuses", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(statuses, 200);
     expect((await statuses.json()).map((s: { status: string }) => s.status)).toEqual(
@@ -24,7 +24,7 @@ test.describe("Lectores", () => {
     );
 
     const readers = await request.get("/api/readers", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(readers, 200);
     expect((await readers.json()).length).toBeGreaterThanOrEqual(2);
@@ -60,7 +60,7 @@ test.describe("Lectores", () => {
     const readerId = (await profile.json()).readerId;
 
     const response = await request.get(`/api/readers/${readerId}`, {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(response, 200);
     const reader = await response.json();
@@ -90,10 +90,10 @@ test.describe("Lectores", () => {
   });
 
   test("reactivar lector inactivo", async ({ request, tokens }) => {
-    const readerId = await getInactiveReaderId(request, tokens.librarian);
+    const readerId = await getInactiveReaderId(request, tokens.admin);
 
     const reactivate = await request.patch(`/api/readers/${readerId}/reactivate`, {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(reactivate, 200);
     expect((await reactivate.json()).readerStatus.status).toBe("ACTIVE");
@@ -122,18 +122,6 @@ test.describe("Lectores", () => {
       updated: expect.any(Number),
       readerIds: expect.any(Array),
     });
-  });
-
-  test("bibliotecario no puede ejecutar sync-inactivity", async ({
-    request,
-    tokens,
-  }) => {
-    await expectStatus(
-      await request.post("/api/readers/sync-inactivity", {
-        headers: bearer(tokens.librarian),
-      }),
-      403,
-    );
   });
 
   test("admin puede actualizar datos de lector", async ({ request, tokens }) => {

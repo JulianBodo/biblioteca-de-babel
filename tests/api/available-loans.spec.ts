@@ -63,7 +63,7 @@ test.describe("Préstamos disponibles", () => {
       (await response.json()).some((item: { id: number }) => item.id === book.id),
     ).toBeFalsy();
 
-    await rejectLoan(request, tokens.librarian, loan.id);
+    await rejectLoan(request, tokens.admin, loan.id);
   });
 
   test("staff ve todos los libros con ejemplares disponibles", async ({
@@ -78,7 +78,7 @@ test.describe("Préstamos disponibles", () => {
     ).length;
 
     const response = await request.get("/api/loans/available", {
-      headers: bearer(tokens.librarian),
+      headers: bearer(tokens.admin),
     });
     await expectStatus(response, 200);
     expect((await response.json()).length).toBe(availableCount);
@@ -98,7 +98,7 @@ test.describe("Préstamos disponibles", () => {
       (await response.json()).some((item: { id: number }) => item.id === book.id),
     ).toBeFalsy();
 
-    await rejectLoan(request, tokens.librarian, loan.id);
+    await rejectLoan(request, tokens.admin, loan.id);
   });
 
   test("lector inactivo no puede consultar préstamos disponibles", async ({

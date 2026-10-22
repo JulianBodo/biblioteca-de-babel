@@ -1,11 +1,10 @@
 export type AuthTokens = {
   admin: string;
-  librarian: string;
   reader: string;
   inactiveReader: string;
 };
 
-export type LoanTokens = Pick<AuthTokens, "admin" | "librarian" | "reader">;
+export type LoanTokens = Pick<AuthTokens, "admin" | "reader">;
 
 export type ApiError = {
   error: string;

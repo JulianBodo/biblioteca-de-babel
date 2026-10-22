@@ -1,4 +1,29 @@
 import { defineConfig } from "@playwright/test";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
+
+const envResult = dotenv.config({
+  path: path.join(rootDir, ".env.test"),
+  override: true,
+});
+
+if (envResult.error) {
+  throw new Error("No se pudo cargar .env.test");
+}
+
+const testDatabaseUrl = process.env.DATABASE_URL;
+
+if (
+  !testDatabaseUrl ||
+  new URL(testDatabaseUrl).pathname.replace(/^\/+/, "") !== "biblioteca_test"
+) {
+  throw new Error(
+    "Playwright debe ejecutarse exclusivamente contra biblioteca_test.",
+  );
+}
 
 const port = process.env.TEST_PORT ?? "3001";
 const baseURL = process.env.API_BASE_URL ?? `http://localhost:${port}`;
