@@ -10,7 +10,7 @@ API REST para gestionar una biblioteca: catálogo de libros, usuarios con roles,
 
 ## Qué hace la aplicación
 
-Tres tipos de usuario conviven en el mismo sistema:
+Dos tipos de usuario conviven en el mismo sistema:
 
 | Rol | Puede hacer |
 |-----|-------------|
