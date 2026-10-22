@@ -9,7 +9,7 @@ const router = Router();
 router.get(
   "/statuses",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(readersController.listReaderStatuses),
 );
 
@@ -23,21 +23,21 @@ router.post(
 router.get(
   "/",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(readersController.listReaders),
 );
 
 router.post(
   "/",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(readersController.createReader),
 );
 
 router.get(
   "/:id",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(readersController.getReader),
 );
 
@@ -51,14 +51,14 @@ router.put(
 router.patch(
   "/:id/reactivate",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(readersController.reactivateReader),
 );
 
 router.patch(
   "/:id/suspend",
   authenticate,
-  authorize(Role.ADMIN, Role.LIBRARIAN),
+  authorize(Role.ADMIN),
   asyncHandler(readersController.suspendReader),
 );
 

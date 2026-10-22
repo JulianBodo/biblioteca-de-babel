@@ -17,7 +17,7 @@ export function buildOpenApiSpec(): OpenAPIV3.Document {
       title: "Biblioteca de Babel — API REST",
       version: "1.0.0",
       description: `
-Sistema de gestión bibliotecaria con roles **ADMIN**, **LIBRARIAN** y **READER**.
+Sistema de gestión bibliotecaria con roles **ADMIN** y **READER**.
 
 ## Autenticación
 
@@ -28,8 +28,7 @@ Sistema de gestión bibliotecaria con roles **ADMIN**, **LIBRARIAN** y **READER*
 
 | Rol | Descripción |
 |-----|-------------|
-| **ADMIN** | CRUD completo de catálogos, libros, usuarios y lectores |
-| **LIBRARIAN** | Gestión de préstamos, lectores (sin usuarios ni catálogos) |
+| **ADMIN** | CRUD completo de catálogos, libros, usuarios y lectores; gestión de préstamos, lectores |
 | **READER** | Consulta de libros disponibles, solicitud y seguimiento de préstamos propios |
 
 ## Ciclo de vida del préstamo
@@ -51,7 +50,6 @@ También: \`PENDING\` → (reject) → \`REJECTED\`
 | Rol | Email | Contraseña |
 |-----|-------|------------|
 | Admin | admin@babel.com | admin123 |
-| Bibliotecario | bibliotecario@babel.com | biblio123 |
 | Lector activo | lector@babel.com | lector123 |
 | Lector inactivo | inactivo@babel.com | inactivo123 |
       `.trim(),

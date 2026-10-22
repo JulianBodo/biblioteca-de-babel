@@ -71,7 +71,7 @@ export const parameters: Record<string, OpenAPIV3.ParameterObject> = {
     required: false,
     schema: { type: "integer", minimum: 1 },
     description:
-      "Filtrar por lector. Solo staff (ADMIN/LIBRARIAN). Los lectores no pueden usar este filtro.",
+      "Filtrar por lector. Solo staff (ADMIN). Los lectores no pueden usar este filtro.",
   },
   statusQuery: {
     name: "status",
@@ -118,7 +118,7 @@ export const parameters: Record<string, OpenAPIV3.ParameterObject> = {
 export const schemas: Record<string, OpenAPIV3.SchemaObject> = {
   Role: {
     type: "string",
-    enum: ["ADMIN", "LIBRARIAN", "READER"],
+    enum: ["ADMIN", "READER"],
     description: "Rol del usuario en el sistema",
   },
   LoanStatus: {
@@ -205,7 +205,7 @@ export const schemas: Record<string, OpenAPIV3.SchemaObject> = {
       readerId: {
         type: "integer",
         nullable: true,
-        description: "ID del lector vinculado (null para admin/bibliotecario)",
+        description: "ID del lector vinculado (null para admin)",
         example: 3,
       },
       reader: {
@@ -583,7 +583,7 @@ export const schemas: Record<string, OpenAPIV3.SchemaObject> = {
       readerId: {
         type: "integer",
         description:
-          "Obligatorio para ADMIN/LIBRARIAN. Ignorado para READER (usa su propio readerId).",
+          "Obligatorio para ADMIN. Ignorado para READER (usa su propio readerId).",
         example: 3,
       },
     },

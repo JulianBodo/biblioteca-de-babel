@@ -148,11 +148,10 @@ Definidas en `constants.ts`, coinciden con el seed de Prisma:
 | Rol | Email | Password |
 |-----|-------|----------|
 | Admin | admin@babel.com | admin123 |
-| Bibliotecario | bibliotecario@babel.com | biblio123 |
 | Lector activo | lector@babel.com | lector123 |
 | Lector inactivo | inactivo@babel.com | inactivo123 |
 
-El fixture `tokens` hace login de los cuatro roles una vez por test file y expone `tokens.admin`, `tokens.librarian`, etc.
+El fixture `tokens` hace login de los cuatro roles una vez por test file y expone `tokens.admin`, etc.
 
 ---
 

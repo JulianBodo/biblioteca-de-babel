@@ -171,7 +171,7 @@ export const bookPaths: OpenAPIV3.PathsObject = {
       tags: ["Libros"],
       summary: "Listar libros",
       description:
-        "Los **READER** ven solo libros con `availableCopies > 0`. Admin/bibliotecario ven el catálogo completo salvo que usen `?available=true`.",
+        "Los **READER** ven solo libros con `availableCopies > 0`. Admin ven el catálogo completo salvo que usen `?available=true`.",
       operationId: "listBooks",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/availableQuery" }],
@@ -665,7 +665,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     get: {
       tags: ["Lectores"],
       summary: "Listar estados de lector",
-      description: "Solo **ADMIN** y **LIBRARIAN**.",
+      description: "Solo **ADMIN**.",
       operationId: "listReaderStatuses",
       security: [{ bearerAuth: [] }],
       responses: {
@@ -711,7 +711,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     get: {
       tags: ["Lectores"],
       summary: "Listar lectores",
-      description: "Solo **ADMIN** y **LIBRARIAN**.",
+      description: "Solo **ADMIN**.",
       operationId: "listReaders",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/statusQuery" }],
@@ -734,7 +734,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     post: {
       tags: ["Lectores"],
       summary: "Crear lector",
-      description: "Solo **ADMIN** y **LIBRARIAN**.",
+      description: "Solo **ADMIN**.",
       operationId: "createReader",
       security: [{ bearerAuth: [] }],
       requestBody: {
@@ -773,7 +773,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     get: {
       tags: ["Lectores"],
       summary: "Obtener lector por ID",
-      description: "Solo **ADMIN** y **LIBRARIAN**.",
+      description: "Solo **ADMIN**.",
       operationId: "getReader",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -841,7 +841,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
     patch: {
       tags: ["Lectores"],
       summary: "Reactivar lector",
-      description: "Solo **ADMIN** y **LIBRARIAN**. Cambia el estado a ACTIVE.",
+      description: "Solo **ADMIN**. Cambia el estado a ACTIVE.",
       operationId: "reactivateReader",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -865,7 +865,7 @@ export const readerPaths: OpenAPIV3.PathsObject = {
       tags: ["Lectores"],
       summary: "Suspender lector",
       description:
-        "Solo **ADMIN** y **LIBRARIAN**. Falla si tiene préstamos PENDING o ACTIVE.",
+        "Solo **ADMIN**. Falla si tiene préstamos PENDING o ACTIVE.",
       operationId: "suspendReader",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -917,7 +917,7 @@ export const loanPaths: OpenAPIV3.PathsObject = {
       description: `Crea una solicitud en estado **PENDING**.
 
 - **READER**: envía solo \`bookId\`; el lector debe estar ACTIVE.
-- **ADMIN/LIBRARIAN**: envían \`bookId\` y \`readerId\`.
+- **ADMIN**: envían \`bookId\` y \`readerId\`.
 
 Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo duplicado del mismo libro para el lector.`,
       operationId: "createLoan",
@@ -951,7 +951,7 @@ Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo d
     get: {
       tags: ["Préstamos"],
       summary: "Listar solicitudes pendientes",
-      description: "Solo **ADMIN** y **LIBRARIAN**.",
+      description: "Solo **ADMIN**.",
       operationId: "listPendingLoans",
       security: [{ bearerAuth: [] }],
       responses: {
@@ -1085,7 +1085,7 @@ Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo d
       tags: ["Préstamos"],
       summary: "Actualizar fecha de vencimiento",
       description:
-        "Solo **ADMIN** y **LIBRARIAN**. Solo préstamos **ACTIVE**. Body: `{ dueDate }`.",
+        "Solo **ADMIN**. Solo préstamos **ACTIVE**. Body: `{ dueDate }`.",
       operationId: "updateLoan",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -1115,7 +1115,7 @@ Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo d
     delete: {
       tags: ["Préstamos"],
       summary: "Eliminar préstamo",
-      description: `Solo **ADMIN** y **LIBRARIAN** con restricciones:
+      description: `Solo **ADMIN** con restricciones:
 
 - **PENDING**: staff puede eliminar.
 - **ACTIVE**: no permitido (devolver primero).
@@ -1137,7 +1137,7 @@ Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo d
       tags: ["Préstamos"],
       summary: "Aprobar solicitud",
       description:
-        "Solo **ADMIN** y **LIBRARIAN**. PENDING → ACTIVE. Descuenta un ejemplar y fija `dueDate` según `LOAN_DAYS` (default 14).",
+        "Solo **ADMIN**. PENDING → ACTIVE. Descuenta un ejemplar y fija `dueDate` según `LOAN_DAYS` (default 14).",
       operationId: "approveLoan",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -1162,7 +1162,7 @@ Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo d
     patch: {
       tags: ["Préstamos"],
       summary: "Rechazar solicitud",
-      description: "Solo **ADMIN** y **LIBRARIAN**. PENDING → REJECTED.",
+      description: "Solo **ADMIN**. PENDING → REJECTED.",
       operationId: "rejectLoan",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],
@@ -1187,7 +1187,7 @@ Validaciones: libro existente, ejemplares disponibles, sin solicitud/préstamo d
       tags: ["Préstamos"],
       summary: "Registrar devolución",
       description:
-        "Solo **ADMIN** y **LIBRARIAN**. ACTIVE → RETURNED. Restaura un ejemplar e incluye `wasLate`.",
+        "Solo **ADMIN**. ACTIVE → RETURNED. Restaura un ejemplar e incluye `wasLate`.",
       operationId: "returnLoan",
       security: [{ bearerAuth: [] }],
       parameters: [{ $ref: "#/components/parameters/idPath" }],

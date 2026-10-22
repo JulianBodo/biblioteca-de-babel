@@ -14,8 +14,7 @@ Tres tipos de usuario conviven en el mismo sistema:
 
 | Rol | Puede hacer |
 |-----|-------------|
-| **ADMIN** | Todo: catálogos, libros, usuarios, lectores y préstamos |
-| **LIBRARIAN** | Préstamos, consulta de lectores, reactivar/suspender lectores |
+| **ADMIN** | Todo: catálogos, libros, usuarios, reactivar/suspender y consulta de lectores y préstamos |
 | **READER** | Ver libros disponibles, pedir préstamos, consultar los propios |
 
 Un préstamo recorre estos estados:
@@ -62,7 +61,6 @@ npm run dev
 | Rol | Email | Contraseña |
 |-----|-------|------------|
 | Admin | admin@babel.com | admin123 |
-| Bibliotecario | bibliotecario@babel.com | biblio123 |
 | Lector activo | lector@babel.com | lector123 |
 | Lector inactivo | inactivo@babel.com | inactivo123 |
 
@@ -205,9 +203,9 @@ Las rutas estáticas (`/pending`, `/available`, `/returns`, `/overdue`) van **an
 ## Flujo típico de un préstamo
 
 1. Lector consulta `GET /loans/available` y pide un libro con `POST /loans`.
-2. Bibliotecario ve `GET /loans/pending` y aprueba con `PATCH /loans/:id/approve`.
+2. Admin ve `GET /loans/pending` y aprueba con `PATCH /loans/:id/approve`.
 3. Al vencer el plazo sin devolver, el préstamo aparece en `GET /loans/overdue`.
-4. Bibliotecario registra `PATCH /loans/:id/return`.
+4. Admin registra `PATCH /loans/:id/return`.
 5. Cualquiera con permiso consulta el historial en `GET /loans/returns`.
 
 ---
