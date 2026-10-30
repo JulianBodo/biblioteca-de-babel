@@ -124,9 +124,9 @@ function enrichLoan<
     book: {
       authors: {
         author: Author;
-    }[];
-  },
-}
+      }[];
+    },
+  }
 >(loan: T) {
   const formatted = formatLoan(loan);
 
@@ -141,8 +141,19 @@ function enrichLoan<
   return formatted;
 }
 
+
 export async function listLoans(role: Role, readerId?: number) {
-  const where = role === Role.READER && readerId ? { readerId } : undefined;
+  if (role === Role.READER && !readerId) {
+    throw new AppError(400, "Tu usuario no está vinculado a un lector");
+  }
+
+  const where =
+    role === Role.READER
+      ? {
+        readerId,
+        status: LoanStatus.ACTIVE,
+      }
+      : undefined;
 
   const loans = await prisma.loan.findMany({
     where,
@@ -152,6 +163,7 @@ export async function listLoans(role: Role, readerId?: number) {
 
   return loans.map((loan) => enrichLoan(loan));
 }
+
 
 /** Préstamos ACTIVE con dueDate vencida; ordenados por días de mora. */
 export async function listOverdueLoans(
@@ -329,12 +341,12 @@ export async function createLoan(readerId: number, bookId: number) {
     },
   });
 
-if (existingPendingOrActive) {
-  throw new AppError(
-    409,
-    `El lector ya tiene una solicitud o préstamo activo para el libro "${book.title}"`,
-  );
-}
+  if (existingPendingOrActive) {
+    throw new AppError(
+      409,
+      `El lector ya tiene una solicitud o préstamo activo para el libro "${book.title}"`,
+    );
+  }
 
   const loan = await prisma.loan.create({
     data: {
