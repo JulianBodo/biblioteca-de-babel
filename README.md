@@ -236,6 +236,27 @@ La collection está organizada por carpetas (auth, libros, catálogos, préstamo
 
 ---
 
+## Base de datos de pruebas
+
+El proyecto utiliza una base de datos independiente para ejecutar los tests de integración. Esto evita que las pruebas modifiquen los datos de desarrollo.
+
+La base de datos utilizada es `biblioteca_test`.
+
+### Configuración
+
+1. Asegurarse de que el contenedor de PostgreSQL esté iniciado:
+
+   ```bash
+   docker compose up -d
+
+2. Crear la base de datos de pruebas si todavía no existe:
+   docker exec -it biblioteca-db psql -U postgres -c "CREATE DATABASE biblioteca_test;"
+   
+3. Crear el archivo de configuración de pruebas a partir del ejemplo:
+   Copy-Item .env.test.example .env.test
+
+---
+
 ## Tests
 
 Suite de **129 tests** de integración con Playwright. Detalle en [`tests/README.md`](tests/README.md).
