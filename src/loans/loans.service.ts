@@ -329,12 +329,12 @@ export async function createLoan(readerId: number, bookId: number) {
     },
   });
 
-  if (existingPendingOrActive) {
-    throw new AppError(
-      409,
-      "El lector ya tiene una solicitud o préstamo activo para este libro",
-    );
-  }
+if (existingPendingOrActive) {
+  throw new AppError(
+    409,
+    `El lector ya tiene una solicitud o préstamo activo para el libro "${book.title}"`,
+  );
+}
 
   const loan = await prisma.loan.create({
     data: {
