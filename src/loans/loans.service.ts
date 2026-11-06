@@ -508,7 +508,9 @@ export async function updateLoan(loanId: number, input: { dueDate?: string }) {
     throw new AppError(400, "dueDate es obligatorio");
   }
 
-  const dueDate = new Date(input.dueDate);
+  const dateStr = typeof input.dueDate === 'string' ? input.dueDate.slice(0, 10) : input.dueDate;
+  const dueDate = new Date(`${dateStr}T00:00:00`);
+
   if (Number.isNaN(dueDate.getTime())) {
     throw new AppError(400, "dueDate inválido");
   }

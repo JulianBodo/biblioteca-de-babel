@@ -48,6 +48,13 @@ router.delete(
 );
 
 router.patch(
+  "/:id/due-date",
+  authenticate,
+  authorize(Role.ADMIN),
+  asyncHandler(loansController.updateDueDate),
+);
+
+router.patch(
   "/:id/approve",
   authenticate,
   authorize(Role.ADMIN),

@@ -145,6 +145,10 @@ export async function updateLoan(req: Request, res: Response) {
   res.json(loan);
 }
 
+export async function updateDueDate(req: Request, res: Response) {
+  return updateLoan(req, res);
+}
+
 export async function deleteLoan(req: Request, res: Response) {
   await loansService.deleteLoan(parseLoanId(req.params.id), req.user!.role);
 
